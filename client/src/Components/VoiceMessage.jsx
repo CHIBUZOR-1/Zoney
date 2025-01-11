@@ -5,8 +5,8 @@ import { FaPlay, FaStop } from 'react-icons/fa6';
 import { useSelector } from 'react-redux';
 import moment from 'moment'
 
-const VoiceMessage = ({message}) => {
-    const user = useSelector(state => state?.user)
+const VoiceMessage = ({message, userz}) => {
+    const user = useSelector(state => state?.user?.user)
     const [audio, setAudio] = useState(null);
     const [isPlaying, setIsPlaying] = useState(false);
     const [currentPlaybackTime, setCurrentPlaybackTime] = useState(0);
@@ -34,9 +34,11 @@ const VoiceMessage = ({message}) => {
                 waveColor: "black",
                 progressColor: "blue",
                 cursorColor: "#7ae3c3",
-                barWidth: 2,
+                barRadius: 3,
+                barWidth: 3,
                 height: 30,
                 responsive: true,
+                normalize:true
             });
             
             waveForm.current.on("finish", ()=> {
@@ -78,7 +80,6 @@ const VoiceMessage = ({message}) => {
     const handlePlayAudio = async() => {
         
         if(audio) {
-            //waveForm.current.stop();
             await initializeAudioContext();
             waveForm.current.play();
             audio.play();
@@ -87,7 +88,6 @@ const VoiceMessage = ({message}) => {
     }
     const handlePauseAudio = async()=> {
         if(audio) {
-            await initializeAudioContext();
             waveForm.current.pause();
             audio.pause();
             setIsPlaying(false);
@@ -96,7 +96,14 @@ const VoiceMessage = ({message}) => {
   return (
     <div className='flex items-center gap-2'>
         <div>
-          <Avatarz image={user?.profilePic} />  
+            {
+                message.byUser === user?.id ? (
+                    <Avatarz height={30} width={30} image={user?.profilePic} name={(user?.firstname + " " + user?.lastname).toUpperCase()} />  
+                ) : (
+                    <Avatarz height={30} width={30} image={userz?.image} name={(userz?.firstname + " " + userz.lastname).toUpperCase()} /> 
+                )
+            }
+          
         </div>
         <div className="cursor-pointer">
             {

@@ -16,15 +16,15 @@ import { assets } from './Assets/assets';
 import EmojiPicker from 'emoji-picker-react';
 import VoiceRecorder from './VoiceRecorder';
 import axios from 'axios';
-import moment from 'moment'
 import VoiceMessage from './VoiceMessage';
 import { calculateTime } from '../Client-Utils/CalculateTime';
 
 
 
 const ChatContainer = () => {
-  const {socket} = useAuth();
-  const user = useSelector(state=> state?.user);
+  const { socket, setMessagez, messagez } = useAuth();
+  const user = useSelector(state=> state?.user?.user);
+  console.log(messagez)
   const [openUploads, setOpenUploads] = useState(false);
   const [allMessages, setAllMessages] = useState([])
   const [details, setDetails] = useState({
@@ -54,7 +54,13 @@ const ChatContainer = () => {
     if(lastMessage.current) {
       lastMessage.current.scrollIntoView({behaviour: 'smooth', block : 'end'})
     }
-  },[allMessages])
+  },[allMessages]);
+  
+  useEffect(()=>{
+    if(lastMessage.current) {
+      lastMessage.current.scrollIntoView({behaviour: 'smooth', block : 'end'})
+    }
+  },[]);
   const [messages, setMessages] = useState({
     text: "",
     image: "",
@@ -76,9 +82,10 @@ const ChatContainer = () => {
       socket.on("message", (data)=> {
         console.log("message", data)
         setAllMessages(data)
+        setMessagez(data)
       })
     }
-  }, [socket, params?.id, user])
+  }, [socket, params?.id, user, allMessages.length])
 
   const handleUploads = ()=>{
     setOpenUploads(prev=> !prev)
@@ -134,13 +141,13 @@ const ChatContainer = () => {
     if(messages.text || imageUrl || videoUrl || voiceUrl) {
       if(socket) {
         socket.emit('new message', {
-          sender: user?.userId,
+          sender: user?.id,
           receiver: params?.id,
           text: messages.text,
           imageUrl,
           videoUrl,
           voiceUrl,
-          sentBy: user?.userId
+          sentBy: user?.id
         })
         setMessages({
           text: "",
@@ -151,6 +158,7 @@ const ChatContainer = () => {
       }
     }
   }
+  console.log("tails", details._id)
   
 
   const handleStopRecording = useCallback((audioBlob) => { 
@@ -162,20 +170,20 @@ const ChatContainer = () => {
 
 
   return (
-    <div style={{backgroundImage: `url(${assets.chatbg1})`}}className=' bg-no-repeat bg-cover'>
-      <header className='sticky top-0  h-14 bg-white flex items-center justify-between px-3'>
+    <div style={{backgroundImage: `url(${assets.chatbg1})`}} className='w-full overflow-hidden bg-no-repeat bg-cover'>
+      <header className='sticky top-0 dark:bg-facebookDark-200 h-14 bg-white flex items-center justify-between px-3'>
         <div className='flex items-center gap-3'>
-          <Link to={'/messages'} className='sm:hidden'><IoIosArrowBack /></Link>
-          <div className='flex items-center'>
+          <Link to={'/messages'} className='sm:hidden dark:text-slate-200'><IoIosArrowBack /></Link>
+          <Link to={`/profile/${details._id}`} className='flex items-center'>
             <Avatar width={40} userId={details._id} height={40} image={details.image} name={(details?.firstname + " " + details?.lastname).toUpperCase() || ""}/>
-          </div>
+          </Link>
           <div>
-            <h3 className='font-semibold text-lg'>{(details?.firstname + " " + details?.lastname || "").toUpperCase()}</h3>
+            <h3 className='font-semibold max-sm:text-sm dark:text-slate-200 text-lg'>{(details?.firstname + " " + details?.lastname || "").toUpperCase()}</h3>
             <p className='text-sm'>{details?.online? <span className='text-green-500'>online</span> : <span className='text-slate-400'>offline</span>}</p>
           </div>
         </div>
         <div className='cursor-pointer text-slate-800 '>
-          <CiMenuKebab className='text-black' />
+          <CiMenuKebab className='text-black dark:text-slate-100' />
         </div>
       </header>
       {/**show all messages */}
@@ -184,11 +192,11 @@ const ChatContainer = () => {
           {
             allMessages.map((convo, i)=> {
               return(
-                <div  key={i+1} className={` p-1 py-1 w-fit max-w-[300px] rounded ${user.userId === convo.byUser? "ml-auto bg-green-300":"bg-white"}`}>
+                <div  key={i+1} className={` p-1 py-1 w-fit max-w-[300px] rounded ${user.id === convo.byUser? "ml-auto bg-green-300":"bg-white"}`}>
                   <div>
                     {
                       convo?.image && (
-                        <div className='w-full'>
+                        <div className='w-full max-sm:w-48 max-sm:h-52'>
                           <img src={`/${convo?.image}`} className='w-full h-full object-scale-down' alt="" />
                         </div>
                       )
@@ -205,7 +213,7 @@ const ChatContainer = () => {
                   </div>
                   <div> 
                     {
-                      convo?.audio && <VoiceMessage message={convo}/>
+                      convo?.audio && <VoiceMessage userz={details} message={convo}/>
                     } 
                   </div>
                   
@@ -218,17 +226,17 @@ const ChatContainer = () => {
         </div>
         {
           messages.image && (
-            <div className='h-full w-full bg-opacity-30 flex justify-center items-center'>
+            <div className='h-full z-10 sticky bottom-0 w-full bg-opacity-30 flex justify-center items-center'>
               <div className='w-fit p-2 absolute top-0 left-0 text-white'><MdOutlineClose className='cursor-pointer hover:text-red-500' onClick={clearImg} /></div>
               <div className='bg-white p-3'>
-                <img src={URL.createObjectURL(messages.image)} className='h-full w-full aspect-square object-scale-down max-w-sm m-2' alt="" />
+                <img src={URL.createObjectURL(messages.image) || ''} className='h-full w-full aspect-square object-scale-down max-w-sm m-2' alt="" />
               </div>
             </div>
           )
         }
         {
           messages.video && (
-            <div className='h-full w-full bg-opacity-30 flex justify-center items-center'>
+            <div className='h-full sticky bottom-0 w-full bg-opacity-30 flex justify-center items-center'>
               <div className='w-fit p-2 absolute top-0 left-0 text-white'><MdOutlineClose onClick={clearVid} /></div>
               <div className='bg-white p-3'>
                 <video controls autoPlay muted src={URL.createObjectURL(messages.video)} className='h-full w-full aspect-square object-scale-down max-w-sm m-2'/>
@@ -238,26 +246,26 @@ const ChatContainer = () => {
         }
         {/**all messages here */}
       </section>
-      <section className='h-14 flex gap-1 px-1 items-center bg-white'>
+      <section className='h-14 flex gap-1 px-1 items-center dark:bg-facebookDark-300 bg-white'>
         {
           !showRecording ? (
-            <div className='h-14 flex gap-1 px-1 items-center w-full bg-white'>
+            <div className='h-14 flex dark:bg-facebookDark-300 pb-2 gap-1 px-1 items-center w-full bg-white'>
                <div className='relative'>
                 <button onClick={handleUploads} className='flex justify-center w-10 h-10 items-center hover:text-white hover:bg-green-600 rounded-full'>
-                  <IoMdAdd />
+                  <IoMdAdd className='dark:text-slate-100' />
                 </button>
                 {/**Uploads */}
                 {
                   openUploads && (
-                    <div className='absolute bg-white rounded shadow w-32 bottom-12 p-2'>
+                    <div className='absolute bg-white dark:bg-facebookDark-300 rounded shadow w-32 bottom-12 p-2'>
                       <form>
                         <label htmlFor="images" className='flex items-center hover:bg-slate-200 cursor-pointer p-2 gap-3'>
                           <div className='text-green-500'><LiaImageSolid /></div>
-                          <p>Image</p>
+                          <p className='dark:text-slate-200'>Image</p>
                         </label>
                         <label htmlFor="videos" className='flex hover:bg-slate-200 cursor-pointer items-center p-2 gap-3'>
                           <div className='text-purple-600'><IoMdVideocam /></div>
-                          <p>Videos</p>
+                          <p className='dark:text-slate-200'>Videos</p>
                         </label>
                         <input type="file" id='images' onChange={uploadImg} accept="image/*" hidden/>
                         <input type="file" id='videos' onChange={uplaodVids} accept="video/*" hidden />
@@ -269,11 +277,11 @@ const ChatContainer = () => {
               </div>
               <div className='flex justify-center relative w-10 h-10 items-center cursor-pointer text-slate-600'>
                 <FaRegFaceSmile className='w-5 h-5' onClick={() => setShowEmojiPicker(val => !val)} />
-                {showEmojiPicker && (
-                  <div ref={emojiRef} className='absolute bottom-14'> 
-                    <EmojiPicker skinTonesDisabled={false} theme='dark' onEmojiClick={handleEmojiClick} /> 
-                  </div>
-                )
+                { showEmojiPicker && (
+                    <div ref={emojiRef} className={`absolute w-11 max-sm:left-0 bottom-14`}> 
+                      <EmojiPicker  skinTonesDisabled={false} height={300} searchDisabled={true} theme='dark' onEmojiClick={handleEmojiClick} /> 
+                    </div>
+                  )
                 }
               </div>
               <div className='w-full h-8'>

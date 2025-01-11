@@ -1,4 +1,5 @@
 const requestModel = require('../Models/FriendRequestModel');
+const notificationModel = require('../Models/NotificationModel');
 const userModel = require('../Models/UserModel');
 
 // Send Friend Request
@@ -26,6 +27,8 @@ const sendRequest = async (req, res) => {
     recipient.friends.push(requester._id);
     await requester.save();
     await recipient.save();
+
+    await requestModel.findByIdAndDelete(requestId);
   
     res.status(200).send('Friend request accepted');
   };
@@ -35,8 +38,12 @@ const sendRequest = async (req, res) => {
     try {
        const { requestId } = req.body;
         const friendRequest = await requestModel.findById(requestId);
+        if (!friendRequest || friendRequest.status !== 'pending') { 
+          return res.status(400).send('Invalid request'); 
+        }
         friendRequest.status = 'rejected';
         await friendRequest.save();
+        await requestModel.findByIdAndDelete(requestId);
         res.status(200).send('Friend request rejected'); 
     } catch (error) {
         console.log(error);
@@ -48,8 +55,22 @@ const sendRequest = async (req, res) => {
     try { 
       /*const user = await userModel.findById(req.user.userId).populate('friendRequests'); 
       if (!user) return res.status(404).send('User not found'); // Find all friend requests for the user*/ 
-      const friendRequests = await requestModel.find({ requestTo: req.user.userId, status: 'pending' }).populate('requestFrom'); 
-      res.send(friendRequests); 
+      const friendRequests = await requestModel.find({ requestTo: req.user.userId, status: 'pending' }).populate({
+        path: 'requestFrom',
+        select: "-password"
+      }); 
+      res.status(200).send(friendRequests); 
+    } catch (error) { 
+      console.error(error); 
+      res.status(500).send('Server error'); 
+    } 
+  };
+  const fetchAllRequests = async (req, res) => { 
+    try { 
+      /*const user = await userModel.findById(req.user.userId).populate('friendRequests'); 
+      if (!user) return res.status(404).send('User not found'); // Find all friend requests for the user*/ 
+      const friendRequests = await requestModel.find({ status: 'pending' }).sort({ createdAt: -1})
+      res.status(200).send(friendRequests); 
     } catch (error) { 
       console.error(error); 
       res.status(500).send('Server error'); 
@@ -75,4 +96,20 @@ const sendRequest = async (req, res) => {
     }
 };
 
-module.exports = { sendRequest, acceptRequest, fetchFriendRequests, rejectRequest };
+const getFriendList = async(req, res)=> {
+  try {
+    const user = await userModel.findById(req.user.userId).populate({
+      path: 'friends',
+      select: '-password'
+    });
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    res.status(200).json(user.friends);
+  } catch (error) {
+    console.error('Error fetching friends:', error); 
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+}
+
+module.exports = { sendRequest, acceptRequest, fetchFriendRequests, rejectRequest, getFriendList, fetchAllRequests };

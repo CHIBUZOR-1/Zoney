@@ -14,8 +14,7 @@ const userSchema = new mongoose.Schema({
         required: true
     },
     phone: {
-        type: String,
-        required: true
+        type: String
     },
     email: {
         type: String,
@@ -26,8 +25,7 @@ const userSchema = new mongoose.Schema({
         type: String,
     },
     gender: {
-        type: String,
-        required: true
+        type: String
     }, 
     profileImg: {
         type: String,
@@ -36,18 +34,16 @@ const userSchema = new mongoose.Schema({
     friends: [{ type: mongoose.Schema.Types.ObjectId, ref: 'users' }],
     following:[{type: mongoose.Schema.Types.ObjectId, ref: 'users'}],
     followers: [{type: mongoose.Schema.Types.ObjectId, ref: 'users'}],
-    bio: {
-        type: String,
-    },
-    age: { type: Number, required: true },
-    birthdate: { type: Date, required: true },
+    about: { bio: { type: String }, city: { type: String }, country: { type: String }, worksAt: { type: String }, education: { type: String } },
+    age: { type: Number },
+    birthdate: { type: Date  },
     role: {
         type: String,
         default: "User"
     },
     password: {
         type: String,
-        required: true
+        required: function() { return !this.googleId; }
     },
     verified: {
         type: Boolean,
@@ -55,9 +51,14 @@ const userSchema = new mongoose.Schema({
     },
     verificationToken: {
         type: String,
+    },
+    googleId: { type: String, 
+        unique: true, 
+        sparse: true // Allows for multiple null values 
     }
 }, {
-    timestamps: true
+    timestamps: true,
+    minimize: false
 });
 
 /*userSchema.pre('find', function() {

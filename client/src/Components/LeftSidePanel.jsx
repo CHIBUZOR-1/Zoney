@@ -15,7 +15,7 @@ import { SlLogout } from "react-icons/sl";
 
 
 const LeftSidePanel = () => {
-  const users = useSelector(state => state?.user);
+  const users = useSelector(state => state?.user?.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const logOut = async()=> {
@@ -33,32 +33,28 @@ const LeftSidePanel = () => {
   }
 
   return (
-    <div className='fixed h-full w-[25%] max-[831px]:hidden transform transition-transform duration-200 ease-in-out translate-x-0 left-0 py-2 z-50 sm:z-0'>
+    <div className='fixed h-full w-[25%] max-[833px]:hidden transform transition-transform duration-200 ease-in-out translate-x-0 left-0 py-2 z-50 sm:z-0'>
         <div className='p-1 flex  h-[92%] flex-col justify-between px-3 overflow-y-auto'>
           <div className='space-y-3'>
-                <div className='flex space-x-2 items-center cursor-pointer'>
-                    <Avatarz userId={users?.userId} height={40} width={40} name={(users?.firstname + " " + users?.lastname).toUpperCase() || ""}/>
-                    <p className='font-semibold'>{(users?.firstname + " " + users?.lastname).toUpperCase() || ""}</p>
+                <div className='flex px-1 dark:hover:bg-slate-400 py-2 hover:bg-slate-300 rounded space-x-2 items-center cursor-pointer'>
+                    <Avatarz userId={users?.id} image={users?.profilePic} height={40} width={40} name={(users?.firstname + " " + users?.lastname).toUpperCase() || ""}/>
+                    <p className='font-semibold dark:text-white'>{(users?.firstname + " " + users?.lastname).toUpperCase() || ""}</p>
                 </div>
-                <div className='flex gap-3 hover:bg-slate-200 items-center cursor-pointer'>
-                  <FaUserFriends className='text-green-500 text-[25px]' />
-                  <p className='font-semibold text-slate-600 text-[17px]'>Friends</p>
-                </div>
-                <div className='flex gap-3 hover:bg-slate-200 items-center cursor-pointer'>
-                  <IoTimerOutline className='text-green-500 text-[25px]' />
-                  <p className='font-semibold text-slate-600 text-[17px]'>Memories</p>
-                </div>
-                <div className='flex hover:bg-slate-200 gap-3 items-center cursor-pointer'>
-                  <IoMdVideocam className='text-green-500 text-[25px]' />
-                  <p className='font-semibold text-slate-600 text-[17px]'>Videos</p>
-                </div>
-                <Link to={"/profile"} className='flex hover:bg-slate-200 gap-3 items-center cursor-pointer'>
-                  <CgProfile className='text-green-500 text-[25px]' />
-                  <p className='font-semibold text-slate-600 text-[17px]'>Profile</p>
+                <Link to={"/friends?view=my_friends"}className='flex gap-3 dark:hover:bg-slate-400 px-1 py-2 rounded hover:bg-slate-300 items-center cursor-pointer'>
+                  <FaUserFriends className='text-green-600 text-[25px]' />
+                  <p className='font-semibold dark:text-white text-slate-600 text-[17px]'>Friends</p>
                 </Link>
-                <div className='flex gap-3 items-center hover:bg-slate-200 cursor-pointer'>
+                <div className='flex px-1 py-2 rounded dark:hover:bg-slate-400 hover:bg-slate-300 gap-3 items-center cursor-pointer'>
+                  <IoMdVideocam className='text-green-600 text-[25px]' />
+                  <p className='font-semibold dark:text-white text-slate-600 text-[17px]'>Videos</p>
+                </div>
+                <Link to={`/Profile/${users?.id}`} className='flex dark:hover:bg-slate-400 hover:bg-slate-300 gap-3 px-1 py-2 rounded items-center cursor-pointer'>
+                  <CgProfile className='text-green-600 text-[25px]' />
+                  <p className='font-semibold dark:text-white text-slate-600 text-[17px]'>Profile</p>
+                </Link>
+                <div className='flex px-1 py-2 dark:hover:bg-slate-400 rounded gap-3 items-center hover:bg-slate-300 cursor-pointer'>
                   <IoMdNotifications className='text-slate-600 text-[25px]' />
-                  <p className='font-semibold text-slate-600 text-[17px]'>Notifications</p>
+                  <p className='font-semibold dark:text-white text-slate-600 text-[17px]'>Notifications</p>
                 </div>
             </div>
             <div className='w-full flex gap-2 h-10 px-1 items-center bg-slate-600 border rounded'>

@@ -20,3 +20,38 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+/*epr-btn epr-emoji-list*/
+.EmojiPickerReact {
+  --epr-emoji-size: 14px;
+}
+
+.scrollbar::-webkit-scrollbar {
+  width: 8px;
+  opacity: 0.5;
+}
+
+.scrollbar::-webkit-scrollbar-track {
+  background: #b8b6b6;
+  border-radius: 10px;
+}
+
+.scrollbar::-webkit-scrollbar-thumb {
+  opacity: 0.5;
+  background: #888;
+  border-radius: 10px;
+}
+
+.custom-modal .ant-modal-content { @apply bg-white; /* Apply light mode background color */ } 
+.dark .custom-modal .ant-modal-content { @apply bg-facebookDark-300; /* Apply dark mode background color */}
+.dark .custom-modal .ant-modal-close { color: white; /* Change the color of the close button */ }
+
+.custom-dropdown .ant-dropdown-menu { @apply bg-white; /* Apply light mode background color */ } 
+.dark .custom-dropdown .ant-dropdown-menu { @apply bg-facebookDark-300; /* Apply dark mode background color */ }

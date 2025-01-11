@@ -6,7 +6,7 @@ import axios from 'axios';
 import { CiSearch } from "react-icons/ci";
 import { Link } from 'react-router-dom';
 
-const Searchchat = ({onclose}) => {
+const Searchchat = ({onclose, addMember}) => {
     const [loading, setLoading] = useState(false);
     const [phrase, setPhrase] = useState("")
     const [search, setSearch] = useState([])
@@ -28,14 +28,14 @@ const Searchchat = ({onclose}) => {
       }
   return (
     <div className='w-full'>
-        <div  className='w-full flex border px-1 mt-5 rounded-sm border-slate-400 justify-center items-center'>
-            <input type="text" className='outline-none p-2  w-full' value={phrase} onChange={(e)=> setPhrase(e.target.value)} placeholder='Search user by name' />
-            <CiSearch className='text-[19px] cursor-pointer  font-semibold' />
+        <div  className='w-full dark:bg-slate-500 flex border px-1 mt-5 rounded-sm border-slate-400 justify-center items-center'>
+            <input type="text" className='outline-none dark:text-slate-200 dark:bg-slate-500 p-2  w-full' value={phrase} onChange={(e)=> setPhrase(e.target.value)} placeholder='Search user by name' />
+            <CiSearch className='text-[19px] dark:text-slate-100 cursor-pointer  font-semibold' />
         </div>
         <div className='mt-2'>
             {
               search.length === 0 && !loading && (
-                <p className='text-center text-lg text-slate-400'>No user found!</p>
+                <p className='text-center dark:text-slate-100 text-lg text-slate-400'>No user found!</p>
               )
             }
             {
@@ -50,15 +50,15 @@ const Searchchat = ({onclose}) => {
               search.length !== 0 && !loading && (
                 search.map((user, index) => {
                   return(
-                    <Link to={`/messages/${user?._id}`} key={user?._id} onClick={onclose} className='flex items-center gap-3 p-2'>
+                    <Link to={`/messages/${user?._id}`} key={user?._id} onClick={onclose} className='flex hover:border rounded-md hover:border-green-600 items-center gap-3 p-2'>
                       <div>
                         <Avatar height={40} image={user?.profileImg} width={40} userId={user?._id} name={(user?.firstname + " " + user?.lastname).toUpperCase() || ""}/>
                       </div>
                       <div>
-                        <div className='font-semibold'>
+                        <div className='font-semibold dark:text-slate-200'>
                           {user?.firstname}
                         </div>
-                        <p className='text-sm'>{user?.email}</p>
+                        <p className='text-sm dark:text-slate-200'>{user?.email}</p>
                       </div>
                     </Link>
                   )

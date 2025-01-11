@@ -37,6 +37,19 @@ const SignUpPage = () => {
     try {
       const oauthResults = await signInWithPopup(auth, provider)
       console.log(oauthResults)
+      const userDetails = { 
+        firstname: oauthResults.user.displayName.split(' ')[0], 
+        lastname: oauthResults.user.displayName.split(' ').slice(1).join(' '), 
+        username: oauthResults.user.displayName.replace(/\s+/g, '').toLowerCase(), 
+        email: oauthResults.user.email,
+        profileImg: oauthResults.user.photoURL,
+        googleId: oauthResults.user.uid
+      };
+      const {data} = await axios.post('/api/users/googleAuth', userDetails);
+      if(data.success) {
+        toast.success(data.message);
+        navigate('/');
+      }
     } catch (error) {
       console.log(error)
     }
@@ -76,39 +89,39 @@ const SignUpPage = () => {
   }
 
   return (
-    <div className='flex items-center flex-col gap-3 pt-5 px-2 justify-center'>
+    <div className='flex h-screen w-full m-0 pb-6 dark:bg-facebookDark-100 items-center flex-col gap-3 pt-5 px-2 justify-center'>
       <div className='flex items-center w-28 rounded-md bg-green-700 px-2 justify-center'>
         <h2 className='text-white font-bold text-2xl'>ZONEY</h2>
       </div>
-      <form onSubmit={handleSubmit} className='gap-6 border h-full max-sm:text-sm border-slate-400 rounded-md p-2 w-[70%] mx-auto '>
+      <form onSubmit={handleSubmit} className='gap-2 max-sm:w-full border flex flex-col h-[50%] max-sm:text-sm border-slate-400 rounded-md p-2 w-[70%] mx-auto '>
         <div className='flex space-x-2 justify-center items-center'>
           <div className='flex w-full flex-col'>
-            <p>Firstname</p>
-            <input name='firstname' id='firstname' value={info.firstname} onChange={handleChange} className='w-full outline-green-400 p-1 border rounded-md' type="text" placeholder='input Firtname' />
+            <p className='dark:text-slate-200'>Firstname</p>
+            <input name='firstname' id='firstname' value={info.firstname} onChange={handleChange} className='w-full dark:bg-slate-800 dark:text-slate-50 outline-green-400 p-1 border rounded-md' type="text" placeholder='input Firtname' />
           </div>
           <div className='flex w-full flex-col'>
-            <p>Lastname</p>
-            <input name='lastname' value={info.lastname} onChange={handleChange} className='w-full p-1 outline-green-400 border rounded-md' type="text" placeholder='input Lastname' />
+            <p className='dark:text-slate-200'>Lastname</p>
+            <input name='lastname' value={info.lastname} onChange={handleChange} className='w-full p-1 dark:bg-slate-800 dark:text-slate-50 outline-green-400 border rounded-md' type="text" placeholder='input Lastname' />
           </div>
         </div>
         <div className='flex space-x-2 justify-center items-center'>
           <div className='flex w-full flex-col'>
-            <p>Username</p>
-            <input name='username' value={info.username} onChange={handleChange} className='w-full outline-green-400 p-1 border rounded-md' type="text" placeholder='input username' />
+            <p className='dark:text-slate-200'>Username</p>
+            <input name='username' value={info.username} onChange={handleChange} className='w-full dark:bg-slate-800 dark:text-slate-50 outline-green-400 p-1 border rounded-md' type="text" placeholder='input username' />
           </div>
           <div className='flex w-full flex-col'>
-            <p>email</p>
-            <input name='email' value={info.email} onChange={handleChange} className='w-full p-1 outline-green-400 border rounded-md' type="email" placeholder='input email' />
+            <p className='dark:text-slate-200'>email</p>
+            <input name='email' value={info.email} onChange={handleChange} className='w-full p-1 dark:bg-slate-800 dark:text-slate-50 outline-green-400 border rounded-md' type="email" placeholder='input email' />
           </div>
         </div>
         <div className='flex space-x-2 justify-center items-center'>
           <div className='flex w-full flex-col'>
-            <p>Phone</p>
-            <input name='phone' value={info.phone} onChange={handleChange} className='w-full outline-green-400 p-1 border rounded-md' type="text" placeholder='input username' />
+            <p className='dark:text-slate-200'>Phone</p>
+            <input name='phone' value={info.phone} onChange={handleChange} className='w-full dark:bg-slate-800 dark:text-slate-50 outline-green-400 p-1 border rounded-md' type="text" placeholder='input username' />
           </div>
           <div className='flex w-full flex-col'>
-            <p>Gender:</p>
-            <select name="gender" id="gender" value={info.gender} onChange={handleChange} className='w-full outline-green-400 p-1 border rounded-md'>
+            <p className='dark:text-slate-200'>Gender:</p>
+            <select name="gender" id="gender" value={info.gender} onChange={handleChange} className='w-full dark:bg-slate-800 dark:text-slate-50 outline-green-400 p-1 border rounded-md'>
               <option className={`${info.gender? 'hidden': 'block'}`} value="">-select-</option>
               <option value="Male">Male</option>
               <option value="Female">Female</option>
@@ -117,37 +130,37 @@ const SignUpPage = () => {
         </div>
         <div className='flex space-x-2 justify-center items-center'>
           <div className='flex w-full flex-col'>
-           <p>Date of Birth</p>
-           <input type="date" value={info.birthdate} name="birthdate" className='w-full outline-green-400 p-1 border rounded-md' onChange={handleChange} required /> 
+           <p className='dark:text-slate-200'>Date of Birth</p>
+           <input type="date" value={info.birthdate} name="birthdate" className='w-full outline-green-400 dark:bg-slate-800 dark:text-slate-50 p-1 border rounded-md' onChange={handleChange} required /> 
           </div>
         </div>
         <div className='flex max-sm:flex-col space-x-2 justify-center items-center'>
           <div className='flex w-full flex-col'>
-            <p>Password</p>
-            <input name='password' id='password' value={info.password} onChange={handleChange} className='w-full outline-green-400 p-1 border rounded-md' type="password" placeholder='input Firtname' />
+            <p className='dark:text-slate-200'>Password</p>
+            <input name='password' id='password' value={info.password} onChange={handleChange} className='w-full dark:bg-slate-800 dark:text-slate-50 outline-green-400 p-1 border rounded-md' type="password" placeholder='input Firtname' />
           </div>
           <div className='flex w-full flex-col'>
-            <p>Confirm Password</p>
-            <input name='confirmPassword' value={info.confirmPassword} onChange={handleChange} className='w-full p-1 outline-green-400 border rounded-md' type="password" placeholder='input Lastname' />
+            <p className='dark:text-slate-200'>Confirm Password</p>
+            <input name='confirmPassword' value={info.confirmPassword} onChange={handleChange} className='w-full dark:bg-slate-800 dark:text-slate-50 p-1 outline-green-400 border rounded-md' type="password" placeholder='input Lastname' />
           </div>
         </div>
         <div className='flex w-full justify-center max-[400px]:text-[12px] max-[500px]:text-[14px] items-center space-x-2 px-1'>
-          <p>Already have an account?</p>
+          <p className='dark:text-slate-200'>Already have an account?</p>
           <p onClick={()=>navigate('/')} className='text-blue-500 cursor-pointer'>Sign In</p>
         </div>
-        <div className='w-full mt-2 flex justify-center items-center'>
+        <div className='w-full flex justify-center items-center'>
           <button type='submit' className='w-[50%] active:bg-slate-800 bg-purple-700 text-white border-slate-700 border rounded-md font-semibold'>{loading ? <div className='w-full   flex items-center justify-center h-full'><ReactLoading type="spin" color='white' height={15} width={15}/></div> : "Register"}</button>
         </div>
       </form>
       <div className='items-center max-sm:text-sm w-[50%] flex-col flex justify-center'>
         <div className='flex items-center w-full justify-center gap-1'>
-          <hr  className='w-[700px] max-sm:w-40 border-slate-300'/>
-          <p>or</p>
-          <hr  className='w-[700px] max-sm:w-40 border-slate-300'/>
+          <hr  className='w-[700px] dark:border-green-500 max-sm:w-40 border-slate-300'/>
+          <p className='dark:text-slate-50'>or</p>
+          <hr  className='w-[700px] dark:border-green-500 max-sm:w-40 border-slate-300'/>
         </div>
         <button onClick={handleGoogleOauth} className='flex border-[2px] max-sm:w-full border-green-800 w-[50%] p-1 rounded gap-2 items-center justify-center'>
           <FcGoogle />
-          <p className='font-semibold max-sm:text-xs'>Sign up with Google</p>
+          <p className='font-semibold dark:text-slate-200 max-sm:text-xs'>Sign up with Google</p>
         </button>
         
       </div>

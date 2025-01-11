@@ -1,16 +1,15 @@
 import React from 'react'
 import { FaRegCircleUser } from "react-icons/fa6";
 import { useSelector } from 'react-redux';
-import { Avatar } from "antd";
 
-const Avatarz = ({userId, name, image, width, height}) => {
+const Avatarz = ({id, name, image, width, height}) => {
     const onlineUser = useSelector(state => state?.user?.onlineUser);
     let avatarName = "";
     if(name) {
         const splitName = name?.split(" ");
 
         if (splitName.length > 1) {
-            avatarName = splitName[0][0]+splitName[1][0]
+            avatarName = splitName[0][0] + splitName[1][0]
         } else {
             avatarName = splitName[0][0]
         }
@@ -27,20 +26,26 @@ const Avatarz = ({userId, name, image, width, height}) => {
         'bg-gray-200',
         'bg-yellow-200'
     ]
-    const isOnline = onlineUser?.includes(userId);
-     const randNum = Math.floor(Math.random() * 9)
+    const isOnline = onlineUser?.includes(id);
+     const randNum = Math.floor(Math.random() * 9) ;
+     const imgSrc = image ? (image.startsWith('http') || image.startsWith('blob:') ? image : `/${image}`) : null;
+     //(image.startsWith('http') || image.startsWith('blob:') ? image : `/${image}`)
+     //const imgSrc = image ? (image.startsWith('uploads') ? `/${image}` : image) : null;
   return (
-    <div className={`text-slate-800 border w-fit text-xl font-bold relative shadow rounded-full ${bgColor[randNum]}`}>
+    <div className={`text-slate-800 border w-fit h-fit text-xl font-bold shadow rounded-full ${bgColor[randNum]}`}>
         {
             image? (
-                <img src={image} className='overflow-hidden rounded-full' width={width} height={height} alt={name} />
+                <div className='rounded-full flex items-center justify-center relative' style={{width : width+'px', height : height+"px"}}>
+                   <img src={imgSrc} className='absolute rounded-full inset-0 object-fill w-full h-full' alt={name} /> 
+                </div>
+                
             ) : (
                 name? (
-                    <div style={{width : width+'px', height : height+"px"}} className='overflow-hidden flex justify-center items-center rounded-full'>
-                        {avatarName.toString()}
+                    <div style={{width : width+'px', height : height+"px"}} className='relative flex justify-center items-center rounded-full'>
+                        <p className=' h-fit w-fit'>{avatarName.toString()}</p>
                     </div>
                 ) : (
-                    <Avatar size={40} />
+                    <FaRegCircleUser />
                 )
             )
         }

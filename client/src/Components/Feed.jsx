@@ -4,13 +4,32 @@ import PostUpload from './PostUpload'
 import axios from 'axios'
 import ReactLoading from 'react-loading'
 import Postz from './Postz'
+import { useLocation, useNavigate } from 'react-router-dom'
+import FullViewPost from './FullViewPost'
 
 const Feed = () => {
   const [allPosts, setAllPosts] = useState([]);
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
+  const [selectedPost, setSelectedPost] = useState(null);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [prevUrl, setPrevUrl] = useState(location.pathname);
+
+  const history = window.history;
+
   useEffect(()=> {
     getAllPost()
   }, [])
+
+  
+    window.onpopstate = function(event) { 
+      if (event.state && event.state.postId) { 
+        const post = allPosts.find(p => p.id === event.state.postId); 
+        setSelectedPost(post); 
+      } else { 
+        setSelectedPost(window.location.pathname); 
+      } 
+    };
   const getAllPost = async()=> {
     try {
       setLoading(true)
@@ -24,15 +43,35 @@ const Feed = () => {
     }
 
   }
+  const handlePostClick = (post) => { 
+    setSelectedPost(post); 
+  };
+  const showPost = (post) => { 
+    setSelectedPost(post); 
+    history.pushState({ postId: post?._id }, '', `/postz/${post?._id}`); 
+  }; 
+  const closePost = () => { 
+    setSelectedPost(null); 
+    history.pushState({}, '', prevUrl); 
+  };
+  
+  const handleUpdatePost = (updatedPost) => { 
+    setAllPosts(allPosts.map(post => (post._id === updatedPost._id ? updatedPost : post))); 
+    setSelectedPost(updatedPost);
+  };
+  const handleUpdatePostz = (updatedPost) => { 
+    setAllPosts(allPosts.map(post => (post._id === updatedPost._id ? updatedPost : post)));
+  };
+
   console.log(allPosts)
 
   return (
-    <div className='w-[40%] ml-[30%] pt-5 flex max-md:ml-0 max-md:w-[75%] max-md:pl-2 max-sm:w-full max-sm:px-1 flex-col justify-center'>
+    <div className='w-[45%] ml-[27%] pt-5 mb-3 flex max-md:ml-0 max-md:w-[67%]  max-md:pl-2 max-sm:w-full max-sm:px-1 flex-col justify-center'>
       <StoryReel />
       <PostUpload/>
       {
           loading && (
-            <div className='flex justify-center items-center pt-2'>
+            <div className='flex mt-3 justify-center items-center pt-2'>
               <ReactLoading type="spin" color='black' height={30} width={30}/>
             </div>
                       
@@ -40,16 +79,21 @@ const Feed = () => {
       }
       {
           allPosts.length === 0 && !loading && (
-            <p className='text-center text-lg text-slate-400'>No user found!</p>
+            <p className='text-center dark:text-slate-200 text-lg text-slate-400'>No Post found!</p>
           )
       }
       {
         allPosts.length !== 0 && !loading && (
           allPosts.map((post, i)=> {
             return(
-              <Postz key={post?._id} img={post?.image} info={post?.text} vid={post?.video} time={post?.createdAt} profile={post?.user}/>
+              <Postz onUpdatePostz={handleUpdatePostz} onClick={() => showPost(post)} key={post?._id + i} post={post}/>
             )
           })
+        )
+      }
+      {
+        selectedPost && ( 
+          <FullViewPost onUpdate={handleUpdatePost} pst={selectedPost} close={closePost}/>
         )
       }
     </div>

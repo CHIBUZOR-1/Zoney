@@ -1,15 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    userId: "",
-    firstname: "",
-    lastname: "",
-    email: "",
-    age: "",
-    gender: "",
-    profilePic: "",
-    coverImage: "",
+    user: null,
     onlineUser: [],
+    chatUsers: [],
+    groupChats: [],
 }
 
 export const userSlice = createSlice({
@@ -17,31 +12,42 @@ export const userSlice = createSlice({
     initialState,
     reducers: {
         setUser: (state, action) => {
-            state.userId = action.payload.id
-            state.firstname = action.payload.firstname
-            state.lastname = action.payload.lastname
-            state.email = action.payload.email
-            state.age = action.payload.age
-            state.gender = action.payload.gender
-            state.profilePic = action.payload.profilePic
-            state.coverImage = action.payload.coverImage
+            state.user = action.payload
         },
         logout: (state) => {
-            state.userId = ""
-            state.firstname = ""
-            state.lastname = ""
-            state.email = ""
-            state.age = ""
-            state.gender = ""
-            state.profilePic = ""
-            state.coverImage = ""
+            state.user = null;
         },
         setOnlineUser: (state, action) => {
             state.onlineUser = action.payload
         },
+        updateProfilePic: (state, action) => { 
+            if (state.user) { 
+                state.user.profilePic = action.payload; 
+            } 
+        },
+        updateCoverPhoto: (state, action) => { 
+            if (state.user) { 
+                state.user.coverImage = action.payload; 
+            } 
+        },
+        updateProfilez: (state, action) => { 
+            if (state.user) { 
+                state.user.firstname = action.payload.firstname;
+                state.user.lastname = action.payload.lastname; 
+                state.user.gender = action.payload.gender; 
+                state.user.age = action.payload.age; 
+            } 
+        },
+        setChatUsers: (state, action) => { 
+            // Add this reducer 
+            state.chatUsers = action.payload; 
+        },
+        setGroupChats: (state, action) => { 
+            state.groupChats = action.payload; // Add this reducer 
+        },
     },
 });
 
-export const { setUser, logout, setOnlineUser } = userSlice.actions
+export const { setUser, setGroupChats, logout, setChatUsers, setOnlineUser, updateProfilePic, updateCoverPhoto, updateProfilez } = userSlice.actions
 
 export default userSlice.reducer;

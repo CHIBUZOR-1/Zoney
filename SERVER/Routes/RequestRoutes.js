@@ -8,5 +8,6 @@ requestRouter.post('/send-request', verifyToken, sendRequest);
 requestRouter.post('/accept-request', verifyToken, acceptRequest); 
 requestRouter.post('/reject-request', verifyToken, rejectRequest); 
 requestRouter.get('/friend-requests', verifyToken, fetchFriendRequests);
+requestRouter.get('/all-friend-requests', verifyToken, fetchFriendRequests);
 
 module.exports = requestRouter;

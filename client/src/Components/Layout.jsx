@@ -16,7 +16,7 @@ const Layout = ({children, title, description}) => {
         <title>{title}</title>
       </Helmet>
       <Navbar />
-      <main className=' bg-slate-50 min-h-screen'>
+      <main className='bg-slate-200 dark:bg-facebookDark-100 min-h-screen'>
         {children}
       </main>
     </div>

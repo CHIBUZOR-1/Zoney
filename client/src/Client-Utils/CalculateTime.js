@@ -82,18 +82,13 @@ export const calculateTimes = (dateString) => {
     }
 };
 
-export const storis = [
-    {
-        img: "https://th.bing.com/th/id/R.1a55f5ba7e7b362606d795d937c1a756?rik=9kFAUyaW%2fndJzg&riu=http%3a%2f%2fimages.unsplash.com%2fphoto-1518568814500-bf0f8d125f46%3fixlib%3drb-1.2.1%26q%3d80%26fm%3djpg%26crop%3dentropy%26cs%3dtinysrgb%26w%3d1080%26fit%3dmax%26ixid%3deyJhcHBfaWQiOjEyMDd9&ehk=%2fv8YRvLrlL4HUO0ZkMIErygOtLDDjC25LZlmksp6Ttc%3d&risl=&pid=ImgRaw&r=0",
-        name: 'weel',
-        profile: "https://th.bing.com/th/id/R.1a55f5ba7e7b362606d795d937c1a756?rik=9kFAUyaW%2fndJzg&riu=http%3a%2f%2fimages.unsplash.com%2fphoto-1518568814500-bf0f8d125f46%3fixlib%3drb-1.2.1%26q%3d80%26fm%3djpg%26crop%3dentropy%26cs%3dtinysrgb%26w%3d1080%26fit%3dmax%26ixid%3deyJhcHBfaWQiOjEyMDd9&ehk=%2fv8YRvLrlL4HUO0ZkMIErygOtLDDjC25LZlmksp6Ttc%3d&risl=&pid=ImgRaw&r=0"
-    },
-    {
-        img: "https://th.bing.com/th/id/R.1a55f5ba7e7b362606d795d937c1a756?rik=9kFAUyaW%2fndJzg&riu=http%3a%2f%2fimages.unsplash.com%2fphoto-1518568814500-bf0f8d125f46%3fixlib%3drb-1.2.1%26q%3d80%26fm%3djpg%26crop%3dentropy%26cs%3dtinysrgb%26w%3d1080%26fit%3dmax%26ixid%3deyJhcHBfaWQiOjEyMDd9&ehk=%2fv8YRvLrlL4HUO0ZkMIErygOtLDDjC25LZlmksp6Ttc%3d&risl=&pid=ImgRaw&r=0",
-        name: 'weel',
-        profile: "https://th.bing.com/th/id/R.1a55f5ba7e7b362606d795d937c1a756?rik=9kFAUyaW%2fndJzg&riu=http%3a%2f%2fimages.unsplash.com%2fphoto-1518568814500-bf0f8d125f46%3fixlib%3drb-1.2.1%26q%3d80%26fm%3djpg%26crop%3dentropy%26cs%3dtinysrgb%26w%3d1080%26fit%3dmax%26ixid%3deyJhcHBfaWQiOjEyMDd9&ehk=%2fv8YRvLrlL4HUO0ZkMIErygOtLDDjC25LZlmksp6Ttc%3d&risl=&pid=ImgRaw&r=0"
-    }
-];
+export const formatNumber = (num) => { 
+    if (num >= 1000) { 
+        return (num / 1000).toFixed(num % 1000 === 0 ? 0 : 1) + 'k'; 
+    } 
+    return num.toString(); 
+};
+
 
 // The moment i used before {moment(convo.createdAT).format('hh:mm')}
 //{moment(convo.createdAT).format('LT')}

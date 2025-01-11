@@ -10,7 +10,8 @@ const AppContext = createContext();
 
 const AppContextProvider = ({children}) => {
   const [socket, setSocket] = useState(null);
-  const user = useSelector(state=> state?.user)
+  const [messagez, setMessagez] = useState([])
+  const user = useSelector(state=> state?.user?.user)
   console.log(user)
   axios.defaults.withCredentials = true;
   const dispatch = useDispatch()
@@ -39,11 +40,11 @@ const AppContextProvider = ({children}) => {
       disconnectSocket();
     };
     // eslint-disable-next-line
-  }, [user?.userId]);
+  }, [user?.id, token, dispatch]);
 
 
   return (
-    <AppContext.Provider value={{socket, setSocket}}>
+    <AppContext.Provider value={{socket, setSocket, messagez, setMessagez}}>
       {children}
     </AppContext.Provider>
   )

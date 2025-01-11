@@ -18,7 +18,7 @@ import ProfilePage from './Pages/ProfilePage';
 
 function App() {
   const [isLoading, setIsLoading] = useState(true); 
-  const isAuthenticated = useSelector(state => state?.user?.userId);
+  const isAuthenticated = useSelector(state => state.user.user?.id);
   useEffect(() => { 
     // Simulate a loading process (e.g., fetching data) 
     setTimeout(() => { 
@@ -40,7 +40,7 @@ function App() {
       <Route path='*' element={<PageNotFound/>}/>
       <Route path="/home" element={<PrivateRoute element={HomePage} />} />
       <Route path="/friends" element={<PrivateRoute element={Friends} />} />
-      <Route path="/Profile" element={<PrivateRoute element={ProfilePage} />} />
+      <Route path="/Profile/:id" element={<PrivateRoute element={ProfilePage} />} />
       <Route path="/notifications" element={<PrivateRoute element={NotificationPage} />} /> 
       <Route path="/messages" element={<PrivateRoute element={ChatPage} />}> 
         <Route path=":id" element={<ChatContainer />} /> 
