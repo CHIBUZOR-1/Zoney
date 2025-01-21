@@ -15,6 +15,7 @@ const getGroupDialoguez = async (userId) => {
         path: 'messages',
         populate: { path: 'sender', select: '-password' } // Populate message sender details
       });
+      console.log("lt", userGroups)
 
     const groupDialogues = userGroups.map((group) => {
       // Count unseen messages for the specific user
@@ -25,16 +26,16 @@ const getGroupDialoguez = async (userId) => {
           return prev;
         }
       }, 0);
-
+      const lastMsg = group.messages[group.messages.length - 1] ;
       return {
         _id: group._id,
         name: group.name,
         members: group.members,
         unseenMsg: countUnseenMessages,
-        lastMsg: group.messages[group.messages.length - 1]
+        lastMsg
       };
     });
-
+    console.log("grp",groupDialogues)
     return groupDialogues;
   } catch (error) {
     console.log(error);

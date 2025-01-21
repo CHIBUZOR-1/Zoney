@@ -6,7 +6,7 @@ import Helmet from 'react-helmet'
 
 const Layout = ({children, title, description}) => {
   return (
-    <div className=''>
+    <div className='flex flex-col p-0 w-full m-0 dark:bg-facebookDark-100'>
       <Helmet>
         <meta charset="UTF-8"/>
         <meta name="author" content="AMAECHI HENRY CHIBUZOR"/>
@@ -16,7 +16,7 @@ const Layout = ({children, title, description}) => {
         <title>{title}</title>
       </Helmet>
       <Navbar />
-      <main className='bg-slate-200 dark:bg-facebookDark-100 min-h-screen'>
+      <main className='bg-slate-200 min-h-screen m-0 dark:bg-facebookDark-100 '>
         {children}
       </main>
     </div>

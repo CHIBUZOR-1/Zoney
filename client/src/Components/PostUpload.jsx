@@ -120,25 +120,25 @@ const PostUpload = () => {
     <div className='w-full dark:bg-facebookDark-200 bg-white mt-5 p-2 rounded-md shadow-md flex flex-col justify-between gap-2'>
         <div className='w-full justify-between flex gap-2 items-center p-2'>
             <div className='flex w-fit items-center'>
-                <Avatarz userId={user?.id} height={40} image={user?.profilePic} width={40} name={(user?.firstname + " " + user?.lastname).toUpperCase() || ""} />
+                <Avatarz id={user?.id} height={40} image={user?.profilePic} width={40} name={(user?.firstname + " " + user?.lastname).toUpperCase() || ""} />
             </div>
             <div className='flex items-center w-[90%] rounded-ful'>
-                <input onClick={showModal} className='w-full bg-slate-300 p-1 outline-none rounded-full' type="text" placeholder={`What's on your mind? ${user?.firstname + " " + user?.lastname || ""}`} />
+                <input onClick={showModal} className='w-full bg-slate-300 p-1 max-sm:text-sm outline-none rounded-full' type="text" placeholder={`What's on your mind? ${user?.firstname + " " + user?.lastname || ""}`} />
             </div>
         </div>
         <hr />
         <div className='flex items-center justify-between p-2'>
             <div className='flex gap-1 items-center'>
                 <RiVideoUploadFill className='text-red-500 text-2xl max-sm:text-sm' />
-                <p className='font-semibold dark:text-slate-300 max-sm:text-xs text-slate-500'>Live video</p>
+                <p className='font-semibold dark:text-slate-300 max-sm:text-sm text-slate-500'>Videos</p>
             </div>
             <div className='flex items-center gap-1'>
                 <FaPhotoVideo className='text-green-500 text-2xl max-sm:text-sm' />
-                <p className='font-semibold dark:text-slate-300 max-sm:text-xs text-slate-500'>Photo/video</p>
+                <p className='font-semibold dark:text-slate-300  max-sm:text-sm text-slate-500'>Photos</p>
             </div>
             <div className='flex gap-1 items-center'>
                 <MdOutlineAddReaction className='text-yellow-500 text-2xl max-sm:text-sm' />
-                <p className='font-semibold dark:text-slate-300 max-sm:text-xs text-slate-500'>Feeling/actitviy</p>
+                <p className='font-semibold dark:text-slate-300  max-sm:text-sm text-slate-500'>Feeling/actitviy</p>
             </div>
         </div>
         <Modal open={isModalOpen} className='custom-modal'  onOk={handleOk} footer={null} onCancel={handleCancel}>
@@ -148,7 +148,7 @@ const PostUpload = () => {
                 </div>
                 <hr />
                 <div className='flex gap-2 w-full items-center'>
-                    <Avatarz userId={user?.id} height={40} width={40} name={(user?.firstname + " " + user?.lastname).toUpperCase() || ""}/>
+                    <Avatarz id={user?.id} height={40} width={40} image={user?.profilePic} name={(user?.firstname + " " + user?.lastname).toUpperCase() || ""}/>
                     <p className='dark:text-slate-200'>{user?.firstname + " " + user?.lastname}</p>
                 </div> 
                 <div className='w-full flex gap-1 items-center rounded'>
@@ -165,13 +165,16 @@ const PostUpload = () => {
                     <label htmlFor="uploads">
                         <div className='w-full relative cursor-pointer hover:bg-slate-200 flex flex-col justify-center items-center h-full rounded border'>
                             { post?.image ? ( 
-                                        <> <img src={URL.createObjectURL(post?.image)} className='h-full w-full aspect-square object-scale-down max-w-sm m-2' alt="" /> 
-                                        <button className='absolute top-1 border-1px rounded-full p-2 border-red-500 font-semibold flex items-center justify-center w-10 h-10 right-1' onClick={clearFile}>x</button> </> 
+                                        <> 
+                                            <img src={URL.createObjectURL(post?.image)} className='h-full w-full aspect-square object-scale-down max-w-sm m-2' alt="" /> 
+                                            <button className='absolute top-1 border-1px rounded-full p-2 border-red-500 font-semibold flex items-center justify-center w-10 h-10 right-1' onClick={clearFile}>x</button> 
+                                        </> 
                                     ) : ( 
                                             post?.video ? ( 
-                                                <div className="relative"> 
-                                                    <video controls muted src={URL.createObjectURL(post?.video)} className='h-full w-full aspect-square object-scale-down max-w-sm m-2'></video> 
-                                                    <button className='absolute top-1 border-1px rounded-full p-2 border-red-500 font-semibold flex items-center justify-center w-10 h-10 right-1' onClick={clearFile}>x</button> </div> 
+                                                <div className="relative h-full w-full"> 
+                                                    <video controls muted src={URL.createObjectURL(post?.video)} className='h-full w-full aspect-square object-fit max-w-sm m-2'></video> 
+                                                    <button className='absolute top-1 border-1px rounded-full p-2 border-red-500 font-semibold flex items-center justify-center w-10 h-10 right-1' onClick={clearFile}>x</button> 
+                                                </div> 
                                             ) : ( 
                                         <> 
                                             <MdOutlineAddToPhotos className='text-[20px] text-slate-400' /> 

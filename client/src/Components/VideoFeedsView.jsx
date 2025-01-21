@@ -11,11 +11,10 @@ import { useAuth } from '../Context/AppContext';
 import { calculateTime, formatNumber } from '../Client-Utils/CalculateTime';
 import Avatarz from './Avatar';
 
-const FullViewPost = ({pst, close, onUpdate}) => {
+const VideoFeedsView = ({pst, close, onUpdate}) => {
     const { socket } = useAuth();
     const user = useSelector(state => state?.user?.user)
-    const [newText, setText] = useState('')
-    //const { id } = useParams();
+    const [newText, setText] = useState('');
     const emojiRef = useRef(null)
     const [selectPost, setSelectPost] = useState(null);
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -108,13 +107,6 @@ const FullViewPost = ({pst, close, onUpdate}) => {
             <div className='md:w-[70%] max-md:h-[60%] max-md:w-full bg-facebookDark-200 h-full'>
                 <div onClick={() => handlePostClick(pst)} className='w-full h-full relative p-1'>
                     <button onClick={close} className='absolute dark:bg-slate-500 dark:text-white flex items-center justify-center h-9 w-9 cursor-pointer p-2 rounded-full font-semibold bg-slate-100 z-20'>X</button>
-                   {
-                        pst?.image && (
-                            <div className='w-full cursor-pointer relative h-full'>
-                                <img src={`/${pst?.image}`} className='h-full absolute max-sm:object-fill inset-0 w-full object-scale-down' alt="" />
-                            </div>
-                        )
-                    }
                     {
                         pst?.video && (
                             <div className='w-full cursor-pointer h-[400px] relative'>
@@ -227,4 +219,4 @@ const FullViewPost = ({pst, close, onUpdate}) => {
   )
 }
 
-export default FullViewPost
+export default VideoFeedsView

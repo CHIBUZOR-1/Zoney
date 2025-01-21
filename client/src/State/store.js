@@ -1,6 +1,5 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import userReducer from './UserSlice'
-import socketReducer from './SocketSlice'
 import storage from 'redux-persist/lib/storage';
 import { persistReducer, persistStore, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER  } from 'redux-persist';
 
@@ -10,8 +9,7 @@ const persistConfig = {
   }
 
   const rootReducer = combineReducers({
-    user: userReducer,
-    socket: socketReducer
+    user: userReducer
   })
 
   const persistedReducer = persistReducer(persistConfig, rootReducer);

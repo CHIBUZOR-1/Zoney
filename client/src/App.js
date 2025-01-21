@@ -15,6 +15,8 @@ import { useSelector } from 'react-redux';
 import { ToastContainer } from 'react-toastify';
 import Friends from './Pages/Friends';
 import ProfilePage from './Pages/ProfilePage';
+import GroupChatContainer from './Components/GroupChatContainer';
+import VideosFeeds from './Pages/VideosFeeds';
 
 function App() {
   const [isLoading, setIsLoading] = useState(true); 
@@ -40,10 +42,12 @@ function App() {
       <Route path='*' element={<PageNotFound/>}/>
       <Route path="/home" element={<PrivateRoute element={HomePage} />} />
       <Route path="/friends" element={<PrivateRoute element={Friends} />} />
+      <Route path="/videos" element={<PrivateRoute element={VideosFeeds} />} />
       <Route path="/Profile/:id" element={<PrivateRoute element={ProfilePage} />} />
       <Route path="/notifications" element={<PrivateRoute element={NotificationPage} />} /> 
       <Route path="/messages" element={<PrivateRoute element={ChatPage} />}> 
         <Route path=":id" element={<ChatContainer />} /> 
+        <Route path='group/:groupid' element={<GroupChatContainer/>} />
       </Route>
      </Routes>
     </>

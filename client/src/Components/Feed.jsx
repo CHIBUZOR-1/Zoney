@@ -4,7 +4,7 @@ import PostUpload from './PostUpload'
 import axios from 'axios'
 import ReactLoading from 'react-loading'
 import Postz from './Postz'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import FullViewPost from './FullViewPost'
 
 const Feed = () => {
@@ -12,7 +12,6 @@ const Feed = () => {
   const [loading, setLoading] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
   const location = useLocation();
-  const navigate = useNavigate();
   const [prevUrl, setPrevUrl] = useState(location.pathname);
 
   const history = window.history;
@@ -22,14 +21,7 @@ const Feed = () => {
   }, [])
 
   
-    window.onpopstate = function(event) { 
-      if (event.state && event.state.postId) { 
-        const post = allPosts.find(p => p.id === event.state.postId); 
-        setSelectedPost(post); 
-      } else { 
-        setSelectedPost(window.location.pathname); 
-      } 
-    };
+    
   const getAllPost = async()=> {
     try {
       setLoading(true)
@@ -43,10 +35,15 @@ const Feed = () => {
     }
 
   }
-  const handlePostClick = (post) => { 
-    setSelectedPost(post); 
-  };
   const showPost = (post) => { 
+    window.onpopstate = function(event) { 
+      if (event.state && event.state.postId) { 
+        const post = allPosts.find(p => p.id === event.state.postId); 
+        setSelectedPost(post); 
+      } else { 
+        setSelectedPost(window.location.pathname); 
+      } 
+    };
     setSelectedPost(post); 
     history.pushState({ postId: post?._id }, '', `/postz/${post?._id}`); 
   }; 
@@ -66,7 +63,7 @@ const Feed = () => {
   console.log(allPosts)
 
   return (
-    <div className='w-[45%] ml-[27%] pt-5 mb-3 flex max-md:ml-0 max-md:w-[67%]  max-md:pl-2 max-sm:w-full max-sm:px-1 flex-col justify-center'>
+    <div className='slopey pt-5 mb-3 flex w-[40%] px-1  max-md:pl-2  max-sm:w-full max-sm:px-1 flex-col justify-center'>
       <StoryReel />
       <PostUpload/>
       {

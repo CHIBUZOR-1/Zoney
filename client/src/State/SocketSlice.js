@@ -5,7 +5,7 @@ const initialState = {
 }
 
 export const socketSlice = createSlice({
-    name: 'socket',
+    name: 'sockets',
     initialState,
     reducers: {
         close: (state) => {

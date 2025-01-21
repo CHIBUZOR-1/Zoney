@@ -5,7 +5,6 @@ const jwt = require('jsonwebtoken');
 const { setCookiesWithToken, socketToken } = require('../Utils/Auth');
 const crypto = require('crypto');
 const { sendMail } = require('../Utils/Auth');
-const { resolve4 } = require('dns');
 
 const userRegisteration = async (req, res) => {
     try {
@@ -210,8 +209,8 @@ const getUserFriends = async (userId) => {
 
 const googleAuthSignUp = async(req, res)=> {
     try {
-        const { username, firstname, lastname, profileImg, email} = req.body;
-        if(!username || !firstname || !lastname || !profileImg || !email) {
+        const { username, firstname, lastname,  email} = req.body;
+        if(!username || !firstname || !lastname  || !email) {
             return res.send({error: "ll fields  are required"});
         }
         const existsEmail = await userModel.findOne({email});
@@ -228,7 +227,6 @@ const googleAuthSignUp = async(req, res)=> {
             lastname,
             email,
             verified: true,
-            profileImg,
             googleId: req.body.googleId
         }).save();
 

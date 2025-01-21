@@ -49,7 +49,7 @@ const Contacts = () => {
                 allContacts.map((ac, i)=> {
                     return(
                         <Link to={`/messages/${ac?._id}`} key={ac?._id} className='flex items-center pr-3 gap-2'>
-                            <Avatarz height={55} name={(ac?.firstname + " " + ac?.lastname).toUpperCase()} width={55} image={ac.profileImg}/>
+                            <Avatarz id={ac?._id} height={55} name={(ac?.firstname + " " + ac?.lastname).toUpperCase()} width={55} image={ac.profileImg}/>
                             <p className='dark:text-slate-200'>{ac?.firstname + " " + ac?.lastname}</p>
                         </Link>
                     )

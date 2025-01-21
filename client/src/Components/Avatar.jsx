@@ -32,7 +32,7 @@ const Avatarz = ({id, name, image, width, height}) => {
      //(image.startsWith('http') || image.startsWith('blob:') ? image : `/${image}`)
      //const imgSrc = image ? (image.startsWith('uploads') ? `/${image}` : image) : null;
   return (
-    <div className={`text-slate-800 border w-fit h-fit text-xl font-bold shadow rounded-full ${bgColor[randNum]}`}>
+    <div className={`text-slate-800 relative border w-fit h-fit text-xl font-bold shadow rounded-full ${bgColor[randNum]}`}>
         {
             image? (
                 <div className='rounded-full flex items-center justify-center relative' style={{width : width+'px', height : height+"px"}}>

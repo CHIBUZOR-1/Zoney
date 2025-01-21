@@ -39,10 +39,9 @@ const SignUpPage = () => {
       console.log(oauthResults)
       const userDetails = { 
         firstname: oauthResults.user.displayName.split(' ')[0], 
-        lastname: oauthResults.user.displayName.split(' ').slice(1).join(' '), 
+        lastname: oauthResults.user.displayName.split(' ').slice(-1).join(' '), 
         username: oauthResults.user.displayName.replace(/\s+/g, '').toLowerCase(), 
         email: oauthResults.user.email,
-        profileImg: oauthResults.user.photoURL,
         googleId: oauthResults.user.uid
       };
       const {data} = await axios.post('/api/users/googleAuth', userDetails);
@@ -93,7 +92,7 @@ const SignUpPage = () => {
       <div className='flex items-center w-28 rounded-md bg-green-700 px-2 justify-center'>
         <h2 className='text-white font-bold text-2xl'>ZONEY</h2>
       </div>
-      <form onSubmit={handleSubmit} className='gap-2 max-sm:w-full border flex flex-col h-[50%] max-sm:text-sm border-slate-400 rounded-md p-2 w-[70%] mx-auto '>
+      <form onSubmit={handleSubmit} className='gap-2 max-sm:w-full border flex flex-col max-sm:text-sm border-slate-400 rounded-md p-2 w-[70%] mx-auto '>
         <div className='flex space-x-2 justify-center items-center'>
           <div className='flex w-full flex-col'>
             <p className='dark:text-slate-200'>Firstname</p>

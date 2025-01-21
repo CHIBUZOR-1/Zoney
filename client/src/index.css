@@ -5,6 +5,7 @@
 * {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
 
 body {
@@ -55,3 +56,16 @@ code {
 
 .custom-dropdown .ant-dropdown-menu { @apply bg-white; /* Apply light mode background color */ } 
 .dark .custom-dropdown .ant-dropdown-menu { @apply bg-facebookDark-300; /* Apply dark mode background color */ }
+
+@media (max-width: 833px) {
+  .slopey {
+    margin-left: 0;
+    width: 60%;
+  }
+}
+
+@media (min-width: 834px) {
+  .slopey {
+    margin-left: 27%;
+  }
+}

@@ -60,16 +60,21 @@ const AllFriends = () => {
               </div>
             )
           }
-          <div className='w-full scrollbar overflow-y-auto flex flex-wrap p-2'>
+          <div className='w-full scrollbar max-sm:grid-cols-2 max-md:grid-cols-3 overflow-y-auto grid grid-cols-4 gap-1 p-2'>
             {
               allFriends.length > 0 && !loading && (
                 allFriends.map((frd, i) => {
                   return(
                       <div key={frd?._id} className='rounded-md border-slate-400 dark:border-slate-400 flex flex-col items-center justify-center border p-1'>
-                        <Avatarz width={180} height={180} image={frd?.profileImg} name={(frd.firstname).toUpperCase()}/>
+                        <div className='max-md:hidden'>
+                          <Avatarz width={150} height={150} image={frd?.profileImg} name={(frd.firstname).toUpperCase()}/>
+                        </div>
+                        <div className='md:hidden'>
+                          <Avatarz width={120} height={120} image={frd?.profileImg} name={(frd.firstname).toUpperCase()}/>
+                        </div>
                         <div>
                           <p className='md:text-sm font-semibold dark:text-slate-200'>{(frd.firstname + " "+ frd.lastname).toUpperCase()}</p>
-                          <p className={`${mutualFrds[frd._id] ? 'block' : "hidden"} font-medium dark:text-slate-300`}>{mutualFrds[frd._id]} mutual friends</p>
+                         <p className={` text-sm text-slate-500 font-medium dark:text-slate-300`}>{mutualFrds[frd?._id] ? (mutualFrds[frd?._id] + " mutual friends")  : "No mutual friends"}</p>
                         </div>
                       </div>
                   )

@@ -10,7 +10,6 @@ const ChatPage = () => {
     const basePath = location.pathname === '/messages';
 
     useSocket();
-    console.log(location.pathname)
   return (
     <Layout>
       <div className='h-[100vh] bg-black overflow-hidden'>

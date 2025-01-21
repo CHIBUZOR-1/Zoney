@@ -3,7 +3,7 @@ import Avatarz from './Avatar'
 
 const NotificationDropdown = ({notifications, refy, load}) => {
   return (
-    <div ref={refy} className='absolute scrollbar p-1 max-sm:w-screen h-96 max-sm:h-screen right-1 max-sm:right-0 bg-white dark:bg-facebookDark-600 w-80 top-14 overflow-y-auto  rounded-md shadow-lg z-10'>
+    <div ref={refy} className='absolute px-2  ease-in scrollbar p-1 max-sm:w-screen h-96 max-sm:h-screen right-1 max-sm:right-0 bg-white dark:bg-facebookDark-600 w-80 top-14 overflow-y-auto  rounded-md shadow-lg z-10'>
         <div className='w-full'>
             <h1 className='dark:text-slate-100 font-semibold text-xl'>Notifications</h1>
         </div>

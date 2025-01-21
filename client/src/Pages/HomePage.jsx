@@ -8,7 +8,7 @@ import Feed from '../Components/Feed'
 const HomePage = () => {
   return (
     <Layout>
-        <div className='flex mt-14 gap-2'>
+        <div className='flex mb-0 ml-0 mr-0 p-0 w-full mt-14 gap-2'>
             <LeftSidePanel/>
             <Feed />
             <RightSidePanel/>

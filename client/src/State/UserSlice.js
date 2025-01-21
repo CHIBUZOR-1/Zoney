@@ -5,7 +5,7 @@ const initialState = {
     onlineUser: [],
     chatUsers: [],
     groupChats: [],
-}
+};
 
 export const userSlice = createSlice({
     name: 'users',
@@ -43,8 +43,8 @@ export const userSlice = createSlice({
             state.chatUsers = action.payload; 
         },
         setGroupChats: (state, action) => { 
-            state.groupChats = action.payload; // Add this reducer 
-        },
+            state.groupChats = action.payload;
+        }
     },
 });
 

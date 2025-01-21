@@ -58,15 +58,6 @@ app.post('/upload', upload.single('file'), (req, res) => {
   res.send({ filePath: `${req.file.destination}${req.file.filename}` }); 
 });
 
-const getGroupDetails = async (groupId) => { 
-  try { 
-    const group = await groupModel.findById(groupId).populate('members', 'firstname lastname profileImg'); 
-    return group; 
-  } catch (error) { 
-    console.error('Error fetching group details:', error); 
-    return null; 
-  } 
-};
 
 
 const onlineUser = new Set();
@@ -111,7 +102,6 @@ io.on("connection", async (socket) => {
 
     // new messages
     socket.on('new message', async (data) => {
-      console.log(data);
       let dialogue = await conversationModel.findOne({
         "$or": [
           { sender: data?.sender, receiver: data?.receiver },
@@ -156,23 +146,37 @@ io.on("connection", async (socket) => {
       io.to(data?.sender).emit("convoUser", convoSender);
       io.to(data?.receiver).emit("convoUser", convoReceiver);
     });
-    // Group chat sockets
-    socket.on("fetchGroupDialogues", async (userId) => { 
-      const groupDialogues = await getGroupDialoguez(userId); 
+    // Group dialogues
+    socket.on("fetchGroupDialogues", async (data) => { 
+      const groupDialogues = await getGroupDialoguez(data); 
       socket.emit("groupDialogues", groupDialogues); 
     }); 
 
     //group details
     socket.on('fetchGroupDetails', async (groupId) => { 
-      const groupDetails = await getGroupDetails(groupId); 
-      socket.emit('groupDetails', groupDetails); 
+        try { 
+          // Fetch group details and old messages in a single query
+          const groupDetails = await groupModel.findById(groupId).populate({
+            path: "members",
+            select: "-password"
+          }).populate({
+            path: 'messages',
+            populate: { path: 'sender', select: '-password' }
+          }).sort({updatedAt: -1});
+          
+          // Emit group details and messages
+          socket.emit('groupDetails', groupDetails);
+          socket.emit('groupAllMessages', groupDetails.messages || []); 
+        } catch (error) { 
+          console.error('Error fetching group details:', error);
+        } 
     });
     // Create Group 
     socket.on('createGroup', async ({ name, members }) => { 
       const group = new groupModel({ name, members }); 
       await group.save(); 
       members.forEach(member => { 
-        io.to(member).emit('groupCreated', group); 
+        io.to(member).emit('groupCreated', {group, uId: member}); 
       })
     });
     // Add Member to Group 
@@ -198,12 +202,34 @@ io.on("connection", async (socket) => {
     });
 
     // Group Chat Messages 
-    socket.on('groupMessage', async ({ groupId, sender, text }) => { 
-      const groupMessage = new groupMessageModel({ group: groupId, sender, text }); 
-      await groupMessage.save(); 
-      const populatedMessage = await groupMessage.populate('sender', 'firstname lastname profileImg'); 
-      const group = await groupModel.findById(groupId); 
-      group.members.forEach(member => { io.to(member).emit('groupMessage', populatedMessage); }); 
+    socket.on('groupMessage', async ({ groupId, sender, text, imageUrl, videoUrl, voiceUrl  }) => {
+      //const grpConv = await groupModel.findOne({_id: groupId}) 
+      const groupMessage = new groupMessageModel({ 
+        group: groupId, 
+        sender, 
+        text,
+        image: imageUrl,
+        video: videoUrl,
+        audio: voiceUrl  
+      }); 
+      
+      await groupMessage.save();
+
+      const group = await groupModel.findByIdAndUpdate(groupId,{
+        $push: { messages: groupMessage._id }},
+        { new: true }).populate({ path: 'members', select: '-password' }).populate({
+          path: 'messages',
+          populate: { path: 'sender', select: '-password' } // Populate message sender details
+        }).sort({updatedAt: -1});
+
+      group.members.forEach(member => { 
+        io.to(member?._id.toString()).emit('groupAllMessages', group.messages || []); 
+      }); 
+
+      for (const member of group.members) { 
+        const groupDialogues = await getGroupDialoguez(member._id.toString()); 
+        io.to(member._id.toString()).emit('groupDialogues', groupDialogues); 
+      }
     });
 
     //Mark message as seen for specific member
@@ -211,7 +237,7 @@ io.on("connection", async (socket) => {
       try { 
         const groupMessages = await groupMessageModel.find({ group: groupId }); 
         groupMessages.forEach(async (message) => { 
-          if (!message.seenBy.includes(userId)) { 
+          if (!message.seenBy.includes(userId.toString())) { 
             message.seenBy.push(userId); 
             await message.save(); 
           } 
@@ -221,6 +247,29 @@ io.on("connection", async (socket) => {
         socket.emit('groupDialogues', groupDialogues); 
       } catch (error) { 
         console.error('Error marking group messages as seen:', error); 
+      } 
+    });
+    socket.on('updateGroupInfo', async(data) => { 
+      try { 
+        const group = await groupModel.findById(data?.groupId).populate({
+          path: 'members',
+          select: '-password'
+        }); 
+        if (group) { 
+          group.image = data?.imageUrl; 
+          group.name = data?.name;
+          await group.save(); 
+          // Emit group details to update clients 
+          io.emit('groupDetails', group); 
+          for (const member of group.members) { 
+            const groupDialogues = await getGroupDialoguez(member._id.toString()); 
+            io.to(member._id.toString()).emit('groupDialogues', groupDialogues); 
+          }
+        } else { 
+          console.log('Group not found'); 
+        } 
+      } catch (error) { 
+        console.error('Error updating group image:', error); 
       } 
     });
 
@@ -264,7 +313,6 @@ io.on("connection", async (socket) => {
           { sender: data, receiver: user?._id },
         ],
       });
-      console.log("c", conversation);
 
       const conversationMsgId = conversation?.message || [];
       await messageModel.updateMany(

@@ -1,24 +1,22 @@
 import React, { useState } from 'react'
 import Avatarz from './Avatar'
-import moment from 'moment';
 import { useAuth } from '../Context/AppContext';
 import { TfiComment } from "react-icons/tfi";
 import { IoMdThumbsUp } from "react-icons/io";
 import axios from 'axios';
 import { useSelector } from 'react-redux';
-import { formatNumber } from '../Client-Utils/CalculateTime';
+import { calculateTime, formatNumber } from '../Client-Utils/CalculateTime';
 import { MdSend } from 'react-icons/md';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { PiDotsThreeOutlineFill } from "react-icons/pi";
 import { toast } from 'react-toastify';
 import ReactLoading from 'react-loading'
 
 
-const Postz = ({onUpdatePostz, path, onClick, onHit, post}) => {
+const Postz = ({onUpdatePostz, path, onClick, onDelete, post}) => {
   const { socket } = useAuth();
   const users = useSelector(state => state?.user?.user);
-  const navigate = useNavigate();
-  const [text, setText] = useState('')
+  const [newText, setText] = useState('')
   const location = useLocation();
   const basePath1 = location.pathname === path;
   const [drop, setDrop] = useState(false)
@@ -30,13 +28,15 @@ const Postz = ({onUpdatePostz, path, onClick, onHit, post}) => {
   const commentPost = async(e)=> {
     e.stopPropagation();
     try {
-      const {data} = await axios.post(`/api/posts/comment/${post._id}`, text); 
+      const {data} = await axios.post(`/api/posts/comment/${post?._id}`, {newText}); 
+      setText('')
       onUpdatePostz(data.post); 
+      setShow(false)
       console.log(data.post)
-      if (socket && post.user !== users.id) { 
+      if (socket && post?.user?._id !== users.id) { 
         socket.emit('commentz', { 
-          from: users.id, 
-          to: post.user._id, 
+          from: users?.id, 
+          to: post?.user?._id, 
           liked: true 
         }); 
       }
@@ -50,13 +50,14 @@ const Postz = ({onUpdatePostz, path, onClick, onHit, post}) => {
   }
   const handleDeletePost = async(id) => {
     setLoader(true)
-    const {data} = await axios.delete(`/api/posts/post/${id}`)
+    const {data} = await axios.delete(`/api/posts/delete-post/${id}`)
     if(data.success) {
       toast.success('Post deleted'); 
+      onDelete(id)
       setLoader(false)
     }
   }
-  console.log(text)
+  console.log(newText)
   const handleLikeUnlikez = async () => { 
     try { 
       const {data} = await axios.post(`/api/posts/like/${post._id}`); 
@@ -78,22 +79,24 @@ const Postz = ({onUpdatePostz, path, onClick, onHit, post}) => {
     setShow(prev=> !prev)
   }
 
+  
+
 
   return (
     <div  className='w-full dark:bg-facebookDark-200 flex flex-col gap-3 p-1 bg-white mt-4 mb-1 rounded shadow-lg'>
       <div className='flex dark:text-slate-200 font-medium justify-between gap-2 items-center w-full'>
         <div className='flex items-center gap-2'>
-          <Avatarz height={35} userId={post?.user._id} width={35} image={post?.user?.profileImg} name={(post?.user.firstname+ " " + post?.user.lastname).toUpperCase() || ""}/>
+          <Avatarz height={35} id={post?.user?._id} width={35} image={post?.user?.profileImg} name={(post?.user.firstname+ " " + post?.user.lastname).toUpperCase() || ""}/>
           <div className='flex flex-col'>
-          <p className='text-xs'>{(post?.user?.firstname + " " + post?.user?.lastname).toUpperCase()}</p>
-          <p className='text-xs'>{moment(post?.createdAt).format('LT')}</p>
+            <p className='text-xs'>{(post?.user?.firstname + " " + post?.user?.lastname).toUpperCase()}</p>
+            <p className='text-xs'>{calculateTime(post?.createdAt)}</p>
           </div>
         </div>
         <div className='flex gap-1 cursor-pointer relative items-center'>
           <ReactLoading className={`${loader ? "block" : "hidden"}`} type="spin" height={10} width={10}/>
           <PiDotsThreeOutlineFill className={`${basePath1 && post?.user?._id === users?.id ? 'block': 'hidden'}`} onClick={handleDrop}/>
            { drop && (
-              <div className='absolute flex items-center justify-center shadow-lg broder bg-slate-300 rounded-md dark:bg-slate-900 -bottom-10 right-0 w-28'>
+              <div className='absolute flex items-center justify-center shadow-lg broder bg-slate-300 rounded-md dark:bg-facebookDark-300 -bottom-10 right-0 w-28'>
                 <button className='p-2 dark:text-slate-100 ' onClick={()=>{handleDeletePost(post._id); setLoader(false)}}>Delete post</button>
               </div>
             )} 
@@ -103,14 +106,17 @@ const Postz = ({onUpdatePostz, path, onClick, onHit, post}) => {
       <div className='dark:text-slate-200 font-medium'>
         <p className='line-clamp-1 text-ellipsis'>{post?.text}</p>
       </div>
-      <div className='h-[400px] relative'>
+      <div className={`${post?.image || post?.video ? "block" : "hidden"} h-[400px] relative{}`}>
         {
           post?.image && (
-            <div onClick={onClick} className='w-full h-full cursor-pointer relative '>
-              <img src={`/${post?.image}`} className='h-full w-full absolute inset-0 object-cover' alt="" />
+            <div onClick={onClick} className='w-full ratte h-full flex items-center justify-center overflow-hidden cursor-pointer relative '>
+              <img  src={`/${post?.image}`} className='w-full h-full  absolute inset-0 object-cover' alt="" />
+              
             </div>
           )
+          
         }
+        
         {
           post?.video && (
             <div onClick={onClick} className='w-full cursor-pointer h-[400px] relative'>
@@ -144,10 +150,10 @@ const Postz = ({onUpdatePostz, path, onClick, onHit, post}) => {
           <p className='dark:text-slate-200 text-slate-700'>Comment</p>
         </div>
         <div className='flex gap-1 items-center'>
-          <div>
-            <Avatarz name={(users?.firstname + " " + users?.lastname).toUpperCase()} image={users?.profilePic} height={33} width={37}/>
+          <div className='w-fit'>
+            <Avatarz id={users.id} name={(users?.firstname + " " + users?.lastname).toUpperCase()} image={users?.profilePic} height={33} width={37}/>
           </div>
-          <input type="text" value={text} onChange={(e)=> setText(e.target.value)} placeholder='Write a comment' onClick={(e) => e.stopPropagation()}  className='border bg-slate-100 px-1 rounded w-full'/>
+          <input type="text" value={newText} onChange={(e)=> setText(e.target.value)} placeholder='Write a comment' onClick={(e) => e.stopPropagation()}  className='border bg-slate-100 px-1 rounded w-full'/>
           <MdSend onClick={commentPost}  className='dark:text-slate-200 text-[25px]'/>
         </div>
       </div>

@@ -19,6 +19,8 @@ import { updateCoverPhoto, updateProfilePic, updateProfilez } from '../State/Use
 import moment from 'moment';
 import ProfileFrdList from '../Components/ProfileFrdList';
 import FullViewPost from '../Components/FullViewPost';
+import { IoIosArrowDropdownCircle } from 'react-icons/io';
+import ReactLoading from 'react-loading'
 
 
 const ProfilePage = () => {
@@ -33,6 +35,8 @@ const ProfilePage = () => {
   const [isModalOpen1, setIsModalOpen1] = useState(false);
   const [isModalOpen2, setIsModalOpen2] = useState(false);
   const [isModalOpen3, setIsModalOpen3] = useState(false);
+  const [relationshipStatus, setRelationshipStatus] = useState('');
+  const [incomingRequestDrp, setIncomingRequestDrp] = useState(false);
   const [aboutz, updateAboutz]= useState({
     bio: '',
     city: '',
@@ -58,6 +62,10 @@ const ProfilePage = () => {
   const [abtLoader, setAbtLoader] = useState(false);
   const [profLoader, setProfLoader] = useState(false)
   const [selectedPost1, setSelectedPost1] = useState(null);
+  const [acpRqtLoad, setAcpRqtLoad] = useState(false);
+  const [rjtRqtLoad, setRjtRqtLoad] = useState(false);
+  const [cncRqtLoad, setCncRqtLoad] =  useState(false);
+  const [addLoad, setAddLoad] = useState(false);
   const [prevUrl, setPrevUrl] = useState(location.pathname);
   const history = window.history;
 
@@ -129,7 +137,25 @@ const ProfilePage = () => {
     history.pushState({}, '', prevUrl); 
   };
 
+  const profileId = params.id;
 
+  useEffect(() => { 
+    if(params?.id !== user?.id){
+      const fetchRelationshipStatus = async () => { 
+      try { const response = await axios.post(`/api/requests/check-relationship-status`, {profileId}); 
+        setRelationshipStatus(response.data.status); 
+      } catch (error) { 
+        console.error('Error fetching relationship status:', error); 
+      } 
+    }; 
+    fetchRelationshipStatus(); 
+    } else {
+      setRelationshipStatus('self'); 
+    }
+    
+}, [params?.id, user?.id]);
+
+console.log(relationshipStatus);
 const updateAbout = async()=> {
   setAbtLoader(true)
   const { data }= await axios.put('/api/users/update-about', aboutz);
@@ -161,25 +187,78 @@ const handleInputChange1 = (e) => {
 
 
 const fetchRequests = async () => { 
-  const {data} = await axios.get(`/api/requests/friend-requests`);
+  const {data} = await axios.get(`/api/requests/all-friend-requests`);
   setRequests(data); 
 };
 const acceptRequest = async(requestId) => {
+  try {
+    setAcpRqtLoad(true)
     const {data} = await axios.post('/api/requests/accept-request', { requestId })
+    if(data?.success) {
+      setRelationshipStatus('friends')
+      toast.success('Friend request sent')
+      setIncomingRequestDrp(false)
+      setAcpRqtLoad(false)
+    }
+  } catch (error) {
+    console.log(error)
+    setAcpRqtLoad(false)
+  }
 }
 const rejectRequest = async(requestId) => {
-    const {data} = await axios.post('/api/requests//reject-request', { requestId })
+  try {
+    setRjtRqtLoad(true)
+    const {data} = await axios.post('/api/requests/reject-request', { requestId });
+    if(data?.success) {
+      setRelationshipStatus('not_friends')
+      setRequests(requestz.filter(reqz => reqz?._id !== requestId))
+      setRjtRqtLoad(false)
+    }
+  } catch (error) {
+    console.log(error)
+    setRjtRqtLoad(false)
+  }
+    
+}
+const cancelRequest = async(requestId) => {
+  try {
+    setCncRqtLoad(true)
+    const {data} = await axios.post('/api/requests/cancel-request', { requestId });
+    if(data?.success) {
+      setRequests(requestz.filter(reqz => reqz?._id !== requestId))
+      setRelationshipStatus('not_friends');
+      setCncRqtLoad(false);
+    }
+  } catch (error) {
+    console.log(error)
+    setCncRqtLoad(false)
+  }
+  
 }
 const sendRequest = async(id)=> {
-  const {data}= await axios.post('/api/requests/send-request', { recipientId: id });
-  if(data.success) {
-    toast.success("Friend request sent")
+  try {
+    setAddLoad(true)
+    const {data}= await axios.post('/api/requests/send-request', { recipientId: id });
+    if(data?.success) {
+      setRelationshipStatus('request_sent')
+      setRequests(prevRequests => [...prevRequests, data?.request])
+      toast.success("Friend request sent")
+      setAddLoad(false)
+    }
+  } catch (error) {
+    console.log(error)
+    setAddLoad(false)
   }
+  
 }
 
 const handleUpdatePost = (updatedPost) => { 
   setMyPosts(myPosts.map(post => (post?._id === updatedPost._id ? updatedPost : post))); 
 };
+
+const updateOnDelete = (postId)=> {
+  setMyPosts(myPosts.filter(post => post?._id !== postId))
+}
 
 
 console.log(img);
@@ -239,6 +318,10 @@ const capturePhoto = () => {
   stopCamera();
   setHide(false);
 };
+
+const incomingDrop = () => {
+  setIncomingRequestDrp(prev => !prev);
+}
 
 const clearCoverImg = ()=> {
   setCoverImg(null);
@@ -345,7 +428,7 @@ const handleCancel3 = () => {
   const tabs = ['Posts', 'About', 'Photos', 'Friends']; 
   const content = { 
     'Posts': 
-    <div className='flex scrollbar pr-1 gap-3 h-full overflow-y-auto max-md:flex-col-reverse justify-between'>
+    <div className='flex scrollbar pr-1 gap-3 max-sm:gap-1 max-sm:justify-around h-full overflow-y-auto max-md:flex-col-reverse justify-between'>
       <div className='md:w-[45%]'>
         {
           myPosts.length === 0 && (
@@ -358,7 +441,7 @@ const handleCancel3 = () => {
           myPosts.length !== 0 && (
             myPosts.map((post, i)=> {
               return(
-                <Postz key={post._id} onUpdatePostz={handleUpdatePost} onClick={() => showPost1(post)} path={location.pathname} post={post}/>
+                <Postz key={post._id} onUpdatePostz={handleUpdatePost} onDelete={updateOnDelete} onClick={() => showPost1(post)} path={location.pathname} post={post}/>
               )
             })
           )
@@ -384,7 +467,7 @@ const handleCancel3 = () => {
       }
     </div>,
     'Friends': 
-      <div className='w-full'>
+      <div className='w-full dark:bg-facebookDark-200 h-full'>
         <ProfileFrdList/>
       </div>,  
   };
@@ -412,7 +495,7 @@ const handleCancel2 = () => {
   return (
     <Layout>
       <div className='relative h-[100vh] dark:bg-facebookDark-200 mt-14'>
-        <div className='relative h-48 bg-slate-300 overflow-hidden'>
+        <div className='relative h-52 bg-slate-300 overflow-hidden'>
           <img src={`/${detailz?.coverImg}` || ''} alt="" className='w-full cursor-pointer absolute inset-0 h-full object-cover' />
           <button  onClick={showModal} className={`right-4 ${params.id === user?.id ? "block": "hidden"} active:bg-blue-300 z-30 bottom-4 absolute flex gap-2 items-center p-1 rounded font-medium cursor-pointer text-sm bg-slate-50`}>
             <FaCamera />
@@ -429,17 +512,27 @@ const handleCancel2 = () => {
               <h1 className='font-bold dark:text-slate-200'>{(detailz?.firstname + " " + detailz?.lastname).toUpperCase()}</h1>
               <p className='text-gray-500 dark:text-slate-200'>1k friends</p>
             </div>
-            <div className=' flex gap-2'>
+            <div className='flex gap-2'>
               {
-                requestz && requestz.length > 0 && (
+                relationshipStatus === 'request_received'  && (
                   requestz.map((r, i)=> {
                     return(
                      <div key={i}>
                       {
-                        params.id === r?.requestFrom?._id && (
-                            <button onClick={()=>acceptRequest(r._id)} className={`${params.id === user?.id ? "hidden": "block"} mt-4 md:mt-0 right-4 bottom-4 flex gap-2 cursor-pointer items-center p-1 px-1 rounded font-medium text-sm bg-slate-300`}>
-                              Accept request
-                            </button>
+                        params.id === r?.requestFrom && user?.id === r?.requestTo && (
+                            <div onClick={incomingDrop} className={`mt-4 md:mt-0 right-4 active:bg-slate-800 bottom-4 flex gap-2 items-center p-1 px-1 rounded font-medium text-sm bg-slate-300`}>
+                              <div className='flex cursor-pointer items-center relative gap-1'>
+                                <p>pending request</p>
+                               <IoIosArrowDropdownCircle className='  text-slate-400' />
+                              </div>
+                               { incomingRequestDrp && (
+                                <div className='absolute flex transition ease-out duration-200 transform flex-col gap-2 w-40 bg-slate-400 z-30 rounded-md -bottom-[84px] p-2'>
+                                  <button className='p-1 cursor-pointer active:bg-slate-600 active:text-slate-200 rounded-md font-semibold bg-slate-300' onClick={()=> acceptRequest(r?._id)}>Accept</button>
+                                  <button className='p-1 cursor-pointer active:bg-slate-600 active:text-slate-200 rounded-md font-semibold bg-slate-300' onClick={()=> rejectRequest(r?._id)}>Reject</button>
+                                </div>
+                               )}
+                            </div>
+
                           
                         ) 
                       }
@@ -449,17 +542,37 @@ const handleCancel2 = () => {
                 )
               }
               {
-                (!requestz || requestz.length === 0) && detailz?.friends?.includes(user?.id) && (
-                    <button className={`${params.id === user?.id ? "hidden": "block"} mt-4 md:mt-0 right-4 bottom-4 flex gap-2 cursor-pointer items-center p-1 px-1 rounded font-medium text-sm bg-slate-300`}>
+                relationshipStatus === 'friends' && (
+                    <button className={` mt-4 md:mt-0 right-4 bottom-4 flex gap-2 cursor-pointer items-center p-1 px-1 rounded font-medium text-sm bg-slate-300`}>
                         Friends
                     </button>
                   )
               }
               {
-                (!requestz || requestz.length === 0) && !detailz?.friends?.includes(user?.id) && (
+                relationshipStatus === 'request_sent' && (
+                  requestz.map((r, i)=> {
+                    return(
+                      <div key={i}>
+                        {
+                          user?.id === r?.requestFrom && params.id === r?.requestTo && (
+                              <button onClick={()=> cancelRequest(r?._id)} className={`${params.id === user?.id ? "hidden": "block"} mt-4 md:mt-0 right-4 bottom-4 flex gap-2 cursor-pointer items-center p-1 px-1 rounded font-medium text-sm bg-slate-300`}>
+                                cancel request
+                                <ReactLoading className={`${cncRqtLoad ? "block" : "hidden"}`} type="spin" height={10} width={10}/>
+                              </button>
+                            
+                          ) 
+                        }
+                      </div>
+                    )
+                  })
+                  )
+              }
+              {
+                relationshipStatus === 'not_friends' && (
                     <button onClick={()=>sendRequest(params.id)} className={`${params.id === user?.id ? "hidden": "block"} mt-4 md:mt-0 right-4 bottom-4 flex gap-2 cursor-pointer items-center p-1 px-1 rounded font-medium text-sm bg-slate-300`}>
                         <HiUserAdd/>
                         Add Friend
+                        <ReactLoading className={`${addLoad ? "block" : "hidden"}`} type="spin" height={10} width={10}/>
                     </button>
                   )
               }
@@ -477,7 +590,7 @@ const handleCancel2 = () => {
           </div>
           
         </div>
-        <div className="w-full h-full max-w-x mx-auto mt-4 bg-white rounded shadow"> 
+        <div className="w-full h-full mx-auto mt-4  rounded shadow"> 
           <TabNav tabs={tabs} activeTab={activeTab} onTabClick={setActiveTab} /> 
           <TabContent content={content[activeTab]} /> 
         </div>
@@ -516,7 +629,7 @@ const handleCancel2 = () => {
               </div>
               <div>
                 <p className='dark:text-slate-200'>Date of Birth</p>
-                <input onChange={handleInputChange} type="date" value={newDetails.newBirthdate? moment(newDetails.newBirthdate).format('YYYY-MM-DD') :moment(detailz?.birthdate).format('YYYY-MM-DD')} name='newBirthdate' className='px-2 py-1 border rounded'/>
+                <input onChange={handleInputChange} type="date" value={newDetails.newBirthdate? moment(newDetails.newBirthdate).format('YYYY-MM-DD') : 'choose date'} name='newBirthdate' className='px-2 py-1 border rounded'/>
               </div>
               <div>
                 <p className='dark:text-slate-200'>Gender</p>

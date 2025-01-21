@@ -6,7 +6,6 @@ import { toast } from 'react-toastify';
 import axios from 'axios';
 import { disconnectSession } from '../Client-Utils/SocketConnection';
 import { FaUserFriends } from "react-icons/fa";
-import { IoTimerOutline } from "react-icons/io5";
 import { IoMdVideocam } from "react-icons/io";
 import { CgProfile } from "react-icons/cg";
 import { IoMdNotifications } from "react-icons/io";
@@ -37,17 +36,17 @@ const LeftSidePanel = () => {
         <div className='p-1 flex  h-[92%] flex-col justify-between px-3 overflow-y-auto'>
           <div className='space-y-3'>
                 <div className='flex px-1 dark:hover:bg-slate-400 py-2 hover:bg-slate-300 rounded space-x-2 items-center cursor-pointer'>
-                    <Avatarz userId={users?.id} image={users?.profilePic} height={40} width={40} name={(users?.firstname + " " + users?.lastname).toUpperCase() || ""}/>
+                    <Avatarz id={users?.id} image={users?.profilePic} height={40} width={40} name={(users?.firstname + " " + users?.lastname).toUpperCase() || ""}/>
                     <p className='font-semibold dark:text-white'>{(users?.firstname + " " + users?.lastname).toUpperCase() || ""}</p>
                 </div>
-                <Link to={"/friends?view=my_friends"}className='flex gap-3 dark:hover:bg-slate-400 px-1 py-2 rounded hover:bg-slate-300 items-center cursor-pointer'>
+                <Link to={"/friends?view=my_friends"} className='flex gap-3 dark:hover:bg-slate-400 px-1 py-2 rounded hover:bg-slate-300 items-center cursor-pointer'>
                   <FaUserFriends className='text-green-600 text-[25px]' />
                   <p className='font-semibold dark:text-white text-slate-600 text-[17px]'>Friends</p>
                 </Link>
-                <div className='flex px-1 py-2 rounded dark:hover:bg-slate-400 hover:bg-slate-300 gap-3 items-center cursor-pointer'>
+                <Link to={'/videos'} className='flex px-1 py-2 rounded dark:hover:bg-slate-400 hover:bg-slate-300 gap-3 items-center cursor-pointer'>
                   <IoMdVideocam className='text-green-600 text-[25px]' />
                   <p className='font-semibold dark:text-white text-slate-600 text-[17px]'>Videos</p>
-                </div>
+                </Link>
                 <Link to={`/Profile/${users?.id}`} className='flex dark:hover:bg-slate-400 hover:bg-slate-300 gap-3 px-1 py-2 rounded items-center cursor-pointer'>
                   <CgProfile className='text-green-600 text-[25px]' />
                   <p className='font-semibold dark:text-white text-slate-600 text-[17px]'>Profile</p>

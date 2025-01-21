@@ -12,17 +12,18 @@ import { FaRegFaceSmile } from "react-icons/fa6";
 import { IoMdSend } from "react-icons/io";
 import { BsFillMicFill } from "react-icons/bs";
 import { MdOutlineClose } from "react-icons/md";
-import { assets } from './Assets/assets';
 import EmojiPicker from 'emoji-picker-react';
 import VoiceRecorder from './VoiceRecorder';
 import axios from 'axios';
 import VoiceMessage from './VoiceMessage';
 import { calculateTime } from '../Client-Utils/CalculateTime';
+import { useTheme } from '../Context/ThemeContext';
 
 
 
 const ChatContainer = () => {
   const { socket, setMessagez, messagez } = useAuth();
+  const { bgd } = useTheme();
   const user = useSelector(state=> state?.user?.user);
   console.log(messagez)
   const [openUploads, setOpenUploads] = useState(false);
@@ -84,8 +85,9 @@ const ChatContainer = () => {
         setAllMessages(data)
         setMessagez(data)
       })
+      setMessages({ text: "", image: "", video: "", voiceClip: "" });
     }
-  }, [socket, params?.id, user, allMessages.length])
+  }, [socket, params?.id, user, allMessages.length, setMessages])
 
   const handleUploads = ()=>{
     setOpenUploads(prev=> !prev)
@@ -162,15 +164,13 @@ const ChatContainer = () => {
   
 
   const handleStopRecording = useCallback((audioBlob) => { 
-    //const audioUrl = URL.createObjectURL(audioBlob);
     setMessages(m => ({ ...m, voiceClip: audioBlob })); 
-    //setShowRecording(false); // Hide the recorder once recording is done 
   }, []); 
 
 
 
   return (
-    <div style={{backgroundImage: `url(${assets.chatbg1})`}} className='w-full overflow-hidden bg-no-repeat bg-cover'>
+    <div style={{backgroundImage: `url(${bgd})`}} className='w-full overflow-hidden bg-no-repeat bg-cover'>
       <header className='sticky top-0 dark:bg-facebookDark-200 h-14 bg-white flex items-center justify-between px-3'>
         <div className='flex items-center gap-3'>
           <Link to={'/messages'} className='sm:hidden dark:text-slate-200'><IoIosArrowBack /></Link>
@@ -216,9 +216,11 @@ const ChatContainer = () => {
                       convo?.audio && <VoiceMessage userz={details} message={convo}/>
                     } 
                   </div>
+                  <div className='flex gap-2 items-center'>
+                    <p className='px-3'>{convo.text}</p>
+                    <p className='text-xs ml-auto w-fit'>{calculateTime(convo?.createdAt)}</p>
+                  </div>
                   
-                  <p className='px-3'>{convo.text}</p>
-                  <p className='text-xs ml-auto w-fit'>{calculateTime(convo?.createdAt)}</p>
                 </div>
               )
             })

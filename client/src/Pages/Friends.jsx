@@ -18,9 +18,9 @@ const Friends = () => {
 
   return (
     <Layout>
-      <div className='flex dark:bg-gray-800 max-sm:gap-4 max-sm:flex-col min-h-[100vh] pt-10 h-screen mt-0 top-0'>
-          <div className='bg-white dark:bg-gray-700 w-full max-w-[300px] max-sm:max-w-full max-sm:px-2 shadow-md border-t-0 h-full'>
-            <aside className='flex flex-col pl-4 pt-9 max-sm:w-full gap-4'>
+      <div className='flex dark:bg-gray-800 max-sm:gap-4 max-sm:flex-col pt-10 min-h-screen mt-0 top-0'>
+          <div className='bg-white max-md:max-w-[35%] dark:bg-gray-700 w-full max-w-[300px] max-sm:max-w-full max-sm:px-2 shadow-md border-t-0 h-full'>
+            <aside className='flex h-screen max-sm:h-full max-sm:pb-2 flex-col pl-4 pt-9 max-sm:w-full gap-4'>
               <h1 className='font-semibold text-slate-700 text-2xl'>Friends</h1>
                 <Link to={'/friends?view=requests'} style={{ textDecoration: 'none ', color: 'inherit'}} className='cursor-pointer hover:bg-slate-200 px-3 h-[40px] text-[20px] border'>
                     <p  className=' flex dark:text-slate-200 justify-between'> Friend Requests</p>

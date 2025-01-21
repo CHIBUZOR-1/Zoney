@@ -10,7 +10,7 @@ const AppContext = createContext();
 
 const AppContextProvider = ({children}) => {
   const [socket, setSocket] = useState(null);
-  const [messagez, setMessagez] = useState([])
+  const [messagez, setMessagez] = useState([]);
   const user = useSelector(state=> state?.user?.user)
   console.log(user)
   axios.defaults.withCredentials = true;

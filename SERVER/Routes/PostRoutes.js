@@ -9,7 +9,7 @@ const createPostRouter = (io) => {
   postRouter.get("/all-posts", verifyToken, getAllPosts);
   postRouter.post('/like/:id', verifyToken, likeUnlikePost);
   postRouter.post("/comment/:id", verifyToken, commentOnPost);
-  postRouter.delete('/post/:id', verifyToken, deletePost);
+  postRouter.delete('/delete-post/:id', verifyToken, deletePost);
   postRouter.get('/view-post/:id', verifyToken, getPostById);
   postRouter.get('/my-posts/:id', verifyToken, postByUserId);
   postRouter.post('/upload-post-file', upload.single('file'), (req, res) => { 

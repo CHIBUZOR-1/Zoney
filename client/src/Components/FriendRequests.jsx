@@ -42,17 +42,17 @@ const FriendRequests = () => {
                             <div className='flex gap-2 items-center w-fit'>
                                 <Avatarz height={35} width={35} name={(lastRequest?.requestFrom?.firstname + " " + lastRequest?.requestFrom?.lastname).toUpperCase()}/>
                                 <div className='flex flex-col items-center w-full'>
-                                    <p className='font-medium text-[14px] dark:text-white'>{(lastRequest?.requestFrom?.firstname + " " + lastRequest?.requestFrom?.lastname).toUpperCase()}</p>
+                                    <p className='max-md:text-xs font-medium text-[14px] dark:text-white'>{(lastRequest?.requestFrom?.firstname + " " + lastRequest?.requestFrom?.lastname).toUpperCase()}</p>
                                     <MutualFriendsCount userId2={lastRequest?.requestFrom?._id}/>
                                 </div>
                             </div>
-                            <div className='flex text-xs w-fit items-center'>
-                                <p className='ml-auto dark:text-white'>{moment(lastRequest?.createdAt).format('LT')}</p>
+                            <div className='flex text-xs w-fit pt-1'>
+                                <p className='ml-auto max-md:text-xs dark:text-white'>{moment(lastRequest?.createdAt).format('LT')}</p>
                             </div>
                         </div>
                         <div className='flex gap-3 w-full justify-center items-center'>
-                            <button onClick={()=> acceptRequest(lastRequest?._id)} className='bg-green-600 rounded p-1 text-white active:bg-green-300 font-semibold'>Confirm</button>
-                            <button onClick={()=> rejectRequest(lastRequest?._id)} className='bg-green-600 rounded p-1 text-white active:bg-green-300 font-semibold'>Reject</button>
+                            <button onClick={()=> acceptRequest(lastRequest?._id)} className='bg-green-600 rounded max-md:text-sm p-1 text-white active:bg-green-300 font-semibold'>Confirm</button>
+                            <button onClick={()=> rejectRequest(lastRequest?._id)} className='bg-green-600 rounded max-md:text-sm p-1 text-white active:bg-green-300 font-semibold'>Reject</button>
                         </div>   
                     </div>
             )

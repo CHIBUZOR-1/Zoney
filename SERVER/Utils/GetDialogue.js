@@ -29,7 +29,7 @@ const getDialoguez = async(data) => {
 
       };
     });
-
+    console.log("grp",dialoguez)
     return dialoguez;
   } catch (error) {
     console.log(error)

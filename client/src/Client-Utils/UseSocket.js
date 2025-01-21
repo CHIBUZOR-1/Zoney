@@ -5,27 +5,35 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setChatUsers, setGroupChats } from '../State/UserSlice';
 
 const useSocket = () => {
-  const { socket } = useAuth();
+  const { socket} = useAuth();
   const dispatch = useDispatch();
   const user = useSelector(state => state?.user?.user);
+  console.log(user)
+
 
   useEffect(() => {
     if (socket && user?.id) {
       socket.emit('sidebar', user?.id);
-
+      socket.emit('fetchGroupDialogues', user?.id);
       socket.on('convoUser', handleConvoUser);
       socket.on('groupDialogues', handleGroupDialogues);
-      socket.on('groupUpdated', handleGroupDialogues);
+      //socket.on('groupUpdated', handleGroupDialoguess);
+      socket.on('groupCreated', (data) => { 
+        console.log('groupCreated event received', data.uId);
+        socket.emit('fetchGroupDialogues', data.uId); 
+      });
 
-      // Clean up the event listener on component unmount
+    // Clean up the event listener on component unmount
       return () => {
         socket.off('convoUser', handleConvoUser);
         socket.off('groupDialogues', handleGroupDialogues);
-        socket.off('groupUpdated', handleGroupDialogues);
+        socket.off('groupCreated');
+        //socket.off('groupUpdated', handleGroupDialogues);
       };
     }
   }, [socket, user?.id]);
   const handleConvoUser = (data) => {
+    console.log('single:', data);
     const convUserData = data.map((convUser) => {
       if (convUser?.sender?._id === convUser?.receiver?._id) {
         return {
@@ -46,8 +54,10 @@ const useSocket = () => {
     });
     dispatch(setChatUsers(convUserData));
   };
+
   const handleGroupDialogues = (data) => { 
-    dispatch(setGroupChats(data)); // Ensure you have an action for this 
+    console.log('groupDialogues:', data);
+    dispatch(setGroupChats(data)); 
   };
 };
 

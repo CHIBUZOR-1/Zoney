@@ -106,6 +106,7 @@ const Navbar = () => {
   const handleClickOutside2 = (event) => { 
     if ( dropdownRef2.current && !dropdownRef2.current.contains(event.target)) { 
       setIsFocused(false); 
+      setPhrase("");
     } 
   };
 
@@ -246,7 +247,7 @@ const Navbar = () => {
                       search.length && phrase.length !== 0 && !loading && (
                         search.map((srch) => {
                           return(
-                            <Link to={`/profile/${srch?._id}`} key={srch?._id} className={`flex hover:bg-gray-500 w-full cursor-pointer items-center gap-3 p-2`}>
+                            <Link onClick={()=> setIsFocused(false)} to={`/profile/${srch?._id}`} key={srch?._id} className={`flex hover:bg-gray-500 w-full cursor-pointer items-center gap-3 p-2`}>
                               <div>
                                 <Avatarz height={40} image={srch?.profileImg} width={40} srchId={srch?._id} name={(srch?.firstname + " " + srch?.lastname).toUpperCase()}/>
                               </div>
@@ -269,12 +270,12 @@ const Navbar = () => {
         <Link to={'/home'} className='bg-slate-100 hover:border-green-300 hover:border cursor-pointer h-10 w-10 font-semibold flex justify-center text-[18px] items-center px-1 rounded-full'>
           <TiHome />
         </Link>
-        <div className='h-10 w-10 border cursor-pointer hover:border-green-300 hover:border rounded-full flex items-center justify-center'>
+        <Link to={'/videos'} className='h-10 w-10 border cursor-pointer hover:border-green-300 hover:border rounded-full flex items-center justify-center'>
           <MdOutlineOndemandVideo className='text-slate-500' />
-        </div>
-        <div className='h-10 w-10 hover:border-green-300 cursor-pointer border rounded-full flex items-center justify-center'>
+        </Link>
+        <Link to={"/friends?view=my_friends"} className='h-10 w-10 hover:border-green-300 cursor-pointer border rounded-full flex items-center justify-center'>
           <GrGroup className='dark:text-slate-300 text-slate-500' />
-        </div>
+        </Link>
       </div>
       <div className='flex items-center max-sm:gap-2 justify-end gap-3 h-24 w-full'>
         <div  className='bg-slate-100 h-10 hidden max-[831px]:flex dark:bg-facebookDark-600 hover:border-green-300 hover:border cursor-pointer w-10 font-semibold justify-center items-center px-2 rounded-full'>
@@ -296,7 +297,7 @@ const Navbar = () => {
         
         <Dropdown overlayClassName='custom-dropdown' menu={{items, onClick: handleMenuClick,}} onOpenChange={handleOpenChange} placement='bottom' open={open} trigger={['click']}>
           <div className='flex relative cursor-pointer items-center hover:border-green-700 hover:border rounded-full justify-center'>
-            <Avatarz userId={user?.id} image={user?.profilePic} name={(user?.firstname + " " + user?.lastname).toUpperCase() || ""}  height={40} width={40}/>
+            <Avatarz id={user?.id} image={user?.profilePic} name={(user?.firstname + " " + user?.lastname).toUpperCase() || ""}  height={40} width={40}/>
             <IoIosArrowDropdownCircle className='absolute hover:animate-pulse dark:text-white text-slate-400 -bottom-1' />
           </div>
         </Dropdown>
