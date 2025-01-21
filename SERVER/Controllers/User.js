@@ -4,7 +4,7 @@ const validator = require('validator');
 const jwt = require('jsonwebtoken');
 const { setCookiesWithToken, socketToken } = require('../Utils/Auth');
 const crypto = require('crypto');
-const { sendMail } = require('../Utils/Auth');
+const { sendMail } = require('../Utils/Email');
 
 const userRegisteration = async (req, res) => {
     try {
@@ -39,7 +39,7 @@ const userRegisteration = async (req, res) => {
 
         const existsUsername = await userModel.findOne({username});
         if(existsUsername) {
-            return res.status(400).json({
+            return res.json({
                 success: false,
                 message: "Username already in use"
             })
@@ -47,21 +47,21 @@ const userRegisteration = async (req, res) => {
 
         const existsEmail = await userModel.findOne({email});
         if(existsEmail) {
-            return res.status(400).json({
+            return res.json({
                 success: false,
                 message: "Email already in use"
             })
         }
         // validating email format & password
         if(!validator.isEmail(email)) {
-            return res.status(400).json({
+            return res.json({
                 success: false,
                 message: "Enter a valid Email Address"
             })
         }
 
         if(password.length < 6) {
-            return res.status(400).json({
+            return res.json({
                 success: false,
                 message: "Please enter a strong password"
             })

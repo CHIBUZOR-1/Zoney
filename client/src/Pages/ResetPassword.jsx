@@ -18,8 +18,9 @@ const ResetPassword = () => {
            
            const {data} = await axios.post(`/api/users/reset-password/${token}`, {newPassword}); 
            if(data.success) {
+            toast.success(data.message);
              navigate("/")
-             toast.success(data.message)
+             
 
            }
            if(!data.success) {
@@ -34,36 +35,34 @@ const ResetPassword = () => {
 
 
   return (
-    <Layout>
-        <div className=' flex justify-center items-center'>
+        <div className=' dark:bg-facebookDark-200 h-screen flex justify-center items-center'>
             <div className=' w-[450px] h-[500px] border px-4 py-2'>
-                <h2 className=' text-[24px] flex font-semibold justify-center'>RESET PASSWORD</h2>
+                <h2 className=' text-[24px] dark:text-slate-200 flex font-semibold justify-center'>RESET PASSWORD</h2>
                 <form className='Sign-form' onSubmit={handleSubmit}>
                     <div className='ms'>
                         <label htmlFor='newPassword'>
-                            <strong>New Password</strong>
+                            <strong className='dark:text-slate-200'>New Password</strong>
                         </label>
                         <br />
-                        <input className=' border rounded-md h-7 w-full px-2 bg-slate-100' name='newPassword' value={newPassword}type='password' placeholder='input Password'id='newPassword' onChange={(e)=> setNewPassword(e.target.value)} />
+                        <input className=' border rounded-md h-7 w-full px-2 dark:bg-slate-500 dark:text-white bg-slate-100' name='newPassword' value={newPassword}type='password' placeholder='input Password'id='newPassword' onChange={(e)=> setNewPassword(e.target.value)} />
                     </div>
                     <br />
                     <div className='ms'>
                         <label htmlFor='confirmNewPassword'>
-                            <strong>Confirm New Password</strong>
+                            <strong className='dark:text-slate-200'>Confirm New Password</strong>
                         </label>
                         <br />
-                        <input className=' border h-7 w-full bg-slate-100 rounded-md px-2' name='confirm' value={confirm} type='password' placeholder='input Password'id='confirmNewPassword' onChange={(e)=> setConfirm(e.target.value)} />
+                        <input className=' border h-7 dark:text-white w-full bg-slate-100 dark:bg-slate-500 rounded-md px-2' name='confirm' value={confirm} type='password' placeholder='input Password'id='confirmNewPassword' onChange={(e)=> setConfirm(e.target.value)} />
                     </div>
                     <br />
                     <div>
-                        <button className=' bg-slate-600 w-full text-white rounded-md h-8' type='submit'>RESET</button>
+                        <button className=' bg-green-500 w-full text-slate-200 rounded-md p-2 font-semibold' type='submit'>RESET</button>
                     </div>
                 </form>
                 
             </div>
 
        </div>
-    </Layout>
   )
 }
 

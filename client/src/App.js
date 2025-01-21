@@ -18,6 +18,7 @@ import GroupChatContainer from './Components/GroupChatContainer';
 import VideosFeeds from './Pages/VideosFeeds';
 import ResetPassword from './Pages/ResetPassword';
 import VerifyEmail from './Pages/VerifyEmail';
+import RegistrationNote from './Pages/RegistrationNote';
 
 function App() {
   const [isLoading, setIsLoading] = useState(true); 
@@ -43,6 +44,7 @@ function App() {
       <Route path="/home" element={<PrivateRoute element={HomePage} />} />
       <Route path="/friends" element={<PrivateRoute element={Friends} />} />
       <Route path="/videos" element={<PrivateRoute element={VideosFeeds} />} />
+      <Route path='/new-user' element={<RegistrationNote/>}/>
       <Route path="/Profile/:id" element={<PrivateRoute element={ProfilePage} />} />
       <Route path='/reset-password/:token' element={<ResetPassword/>}/>
       <Route path='/verify-email/:token' element={<VerifyEmail/>}/>

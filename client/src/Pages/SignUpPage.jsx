@@ -75,7 +75,7 @@ const SignUpPage = () => {
             confirmPassword: ""
           })
           setLoading(false)
-          navigate("/")
+          navigate("/new-user")
         }
         if(!data.success) {
           toast.warn(data.message)

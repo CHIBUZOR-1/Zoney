@@ -3,11 +3,13 @@ import ReactLoading from 'react-loading'
 import { assets } from '../Components/Assets/assets';
 import { toast } from 'react-toastify';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const ForgotPasswordPage = () => {
 
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async(e) => {
     e.preventDefault()
@@ -16,7 +18,10 @@ const ForgotPasswordPage = () => {
     if(data.success) {
         toast.success(data.message)
         setEmail("")
-        setLoading(false)
+        setTimeout(() => { 
+            setLoading(false); 
+            navigate('/')
+          }, 3000);
     } else {
         toast.error('Email not valid!')
         setLoading(false)
@@ -43,7 +48,7 @@ const ForgotPasswordPage = () => {
                     </div>
                     <br />
                     <div>
-                        <button disabled={!email} className={`${!email? "bg-slate-300":"bg-slate-600"} w-full cursor-pointer  text-white rounded-md h-8`} type='submit'>{loading ? <div className='w-full   flex items-center justify-center h-full'><ReactLoading type="spin" color='white' height={15} width={15}/></div> : "Continue"}</button>
+                        <button disabled={!email} className={`${!email? "bg-green-300":"bg-green-500"} w-full font-semibold cursor-pointer  text-white rounded-md h-8`} type='submit'>{loading ? <div className='w-full   flex items-center justify-center h-full'><ReactLoading type="spin" color='white' height={15} width={15}/></div> : "Continue"}</button>
                     </div>
                 </form>
                 
