@@ -81,11 +81,11 @@ const userRegisteration = async (req, res) => {
             password: `${hashedPassword}`,
             verificationToken: crypto.randomBytes(32).toString('hex')
         }).save();
-        /*const msg = `<p>Hello ${newUser.firstname}, Please verify your email address by clicking on the link below</p>
+        const msg = `<p>Hello ${newUser.firstname + " " + newUser.lastname}, Please verify your email address by clicking on the link below</p>
     <br>
     <a href="${process.env.ORIGIN}/verify-email/${newUser.verificationToken}">CLICK here</a>`;
     const sub = "Email Verification..";
-        await sendMail(newUser.email, sub, msg)*/
+        await sendMail(newUser.email, sub, msg);
         res.status(201).json({
             success: true,
             error: false,
@@ -143,6 +143,10 @@ const userLogin = async (req, res, next) => {
                 message: "User not found"
             })
         } 
+
+        if (!user.verified) {
+            return res.json({ success: false, message: 'User not verified' });
+        }
 
         const matchedPassword = await bcrypt.compare(password, user.password);
         if(!matchedPassword) {
@@ -327,18 +331,27 @@ const allUsers = async(req, res)=> {
 }
 const getSuggestions = async(req, res)=> {
     try {
-        const friendz = await userModel.findById(req.user.userId).select('friends');
+        const friendz = await userModel.findById(req.user.userId).select('friends').populate({ 
+            path:'friends',
+            select: '_id',
+        }).lean();
         const users = await userModel.aggregate([
             {
                 $match: {
                     _id: { $ne: req.user.userId},
                 },
             },
-            { $sample: { size: 10 } },
+            { $sample: { size: 20 } },
         ]);
-        const fileterUsers = users.filter((user)=> !friendz.friends.includes(user._id));
-        const suggestedUsers = fileterUsers.slice(0, 8)
+        const friendIds = friendz.friends.map(friend => friend._id.toString());
+        const filteredUsers = users.filter(user => { 
+            const userIdStr = user._id.toString(); 
+            return userIdStr !== req.user.userId && !friendIds.includes(userIdStr); 
+        });
+        console.log(filteredUsers)
+        const suggestedUsers = filteredUsers.slice(0, 8)
         suggestedUsers.forEach((user)=> { user.password = null });
+        res.status(200).json({ success: true, suggestedUsers});
     } catch (error) {
         console.log(error);
         res.status(500).json({ error: 'Internal Server Error' });
@@ -469,8 +482,116 @@ const updateAbout = async (req, res) => {
     }
 };
 
+const forgotPassword = async(req, res) => {
+    try {
+       const { email } = req.body;
+        const user = await userModel.findOne({ email });
+    
+        if (!user) {
+        return res.json({
+            success: false,
+            message: "Email Does Not Exist"
+        });
+        }
+    
+        const token = crypto.randomBytes(20).toString('hex');
+        user.verificationToken = token;
+    // user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+    
+        await user.save();
+        const topic = "Password Reset Request";
+        const info = `<div><p>${user.firstname} ${user.lastname},</p> <p>An attempt was made to reset the password of your account.</p>
+        <p>If this was you click on the link below:</p> <br> <a href="${process.env.ORIGIN}/reset-password/${user.verificationToken}">click here</a> <p>You can ignore the message if you didn't make the request.</p></div>`
+        await sendMail(user.email, topic, info) 
+        res.status(200).json({
+            success: true,
+            message: "Password Reset Link Sent"
+        })
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            error: true,
+            message: "An error occurred!"
+        })
+    }
+
+    
+}
+
+const resetPassword = async (req, res) => {
+    try {
+        const {token} = req.params;
+        const {  newPassword } = req.body;
+
+        if(!newPassword) {
+            return res.json({success: false, message: "Password required"});
+        }
+        const user = await userModel.findOne({verificationToken: token});
+        if(!user) {
+            return res.json({
+                success: false,
+                message: "Inavlid token"
+            })
+        }
+        const salt = bcrypt.genSaltSync(10);
+        const hashedPassword = bcrypt.hashSync(newPassword, `${salt}`);
+
+        user.password = hashedPassword;
+        user.verificationToken = null;
+        await user.save()
+        const topic = "Password Reset Successful";
+        const info = `<div><p>Your password has been reset successfully.</p></div>`
+
+        await sendMail(user.email, topic, info);
+        res.status(200).json({
+            success: true,
+            message: "Password Reset Successfully"
+        })
+
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            success:false,
+            error: true,
+            message: "Something went wrong!"
+        })
+    }
+}
+
+const emailVerification = async(req, res) => {
+    try {
+        const { token } = req.params;
+        const user = await userModel.findOne({verificationToken: token});
+        if(!user) {
+             return res.json({
+                success: false,
+                message: "invalid token!"
+            })
+        }
+        user.verified = true;
+        user.verificationToken = null;
+        await user.save();
+        const msg = `<p>Your Email Verification is Successful.</p>`;
+        const sub = "Email Verified";
+        await sendMail(user.email, sub, msg)
+        res.status(200).json({
+            success: true,
+            message: "Verified Successfully"
+        })
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            success: false,
+            error: true,
+            message: "An error occurred!"
+        })
+    }
+}
 
 
 
 
-module.exports = { userRegisteration, updateCoverImg, updateAbout, updateProfilePhoto, googleAuthSignUp, allUsers, getMutualFriends, userLogin, searchUsers, logout, getSuggestions, getuserDetails, updateProfile, googleAuthLogin, getAllFriends}
+
+module.exports = { userRegisteration, forgotPassword, emailVerification, resetPassword, updateCoverImg, updateAbout, updateProfilePhoto, googleAuthSignUp, allUsers, getMutualFriends, userLogin, searchUsers, logout, getSuggestions, getuserDetails, updateProfile, googleAuthLogin, getAllFriends}

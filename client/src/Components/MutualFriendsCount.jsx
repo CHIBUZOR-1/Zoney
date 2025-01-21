@@ -15,8 +15,8 @@ const MutualFriendsCount = ({userId2}) => {
     }
         
   return (
-    <div className={`flex ${mutualFrds.length ? "block" : "hidden"} gap-1 w-full`}>
-        <p className='text-xs dark:text-slate-200 flex'>{formatNumber(mutualFrds.length).toString() + " "}</p>
+    <div className={`flex justify-center gap-1 w-full`}>
+        <p className='text-xs dark:text-slate-200 flex'>{mutualFrds?.length? formatNumber(mutualFrds.length).toString() + " " : "No"}</p>
         <p className='text-xs dark:text-slate-200 flex'>mutual friends</p>
     </div>
   )

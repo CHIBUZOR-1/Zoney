@@ -1,6 +1,6 @@
 const express = require('express');
 const userRouter = express.Router();
-const { userRegisteration, userLogin, logout, searchUsers, allUsers, getMutualFriends, getSuggestions, getuserDetails, googleAuthSignUp, googleAuthLogin, updateProfilePhoto, getAllFriends, updateAbout, updateCoverImg, updateProfile } = require('../Controllers/User');
+const { userRegisteration, userLogin, logout, searchUsers, allUsers, getMutualFriends, getSuggestions, getuserDetails, googleAuthSignUp, googleAuthLogin, updateProfilePhoto, getAllFriends, updateAbout, updateCoverImg, updateProfile, forgotPassword, resetPassword, emailVerification } = require('../Controllers/User');
 const {verifyToken } = require('../Utils/Auth');
 const { upload } = require('../Socket/index');
 
@@ -17,6 +17,9 @@ userRouter.post('/googleAuthLogin', googleAuthLogin);
 userRouter.post('/newProfilePhoto', verifyToken, updateProfilePhoto);
 userRouter.post('/newCoverImg', verifyToken, updateCoverImg);
 userRouter.get('/all-friends', verifyToken, getAllFriends);
+userRouter.post('/forgot-password', forgotPassword);
+userRouter.post('/reset-password/:token', resetPassword);
+userRouter.get('/verify-email/:token', emailVerification)
 userRouter.put('/update-about', verifyToken, updateAbout);
 userRouter.put('/update-profile', verifyToken, updateProfile);
 userRouter.post('/uploadProfilePhoto', upload.single('file'), (req, res) => { 

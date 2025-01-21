@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import ReactLoading from 'react-loading'
 import { assets } from '../Components/Assets/assets';
+import { toast } from 'react-toastify';
+import axios from 'axios';
 
 const ForgotPasswordPage = () => {
 
@@ -9,24 +11,35 @@ const ForgotPasswordPage = () => {
 
   const handleSubmit = async(e) => {
     e.preventDefault()
+    setLoading(true)
+    const {data} = await axios.post('/api/users/forgot-password', {email});
+    if(data.success) {
+        toast.success(data.message)
+        setEmail("")
+        setLoading(false)
+    } else {
+        toast.error('Email not valid!')
+        setLoading(false)
+    }
   }
+ // h-[200px] max-[480px]:h-full
 
   return (
-      <div className=' flex max-[480px]:px-2 flex-col justify-center gap-3 mt-5 items-center'>
-            <div className='flex justify-center max-lg:w-36 items-center rounded border h-16 w-24'>
+      <div className=' dark:bg-facebookDark-200 flex h-screen overflow-hidden max-[480px]:px-2 flex-col justify-center gap-3 items-center'>
+            <div className='flex justify-center max-lg:w-36 items-center rounded border h-24 w-24'>
                <img src={assets.z} className='h-full w-full' alt="" /> 
             </div>
             
-            <div className=' w-[450px] max-[480px]:w-full h-[200px] max-[480px]:h-full border max-[480px]:px-1 rounded px-4 py-2'>
-                <h2 className=' text-[24px] max-[480px]:text-[15px] flex font-semibold justify-center'>FORGOT PASSWORD?</h2>
-                <p className='max-[480px]:text-[11px]'>Enter the email address associated with your Glee account.</p>
+            <div className=' w-[450px] flex flex-col items-center max-[480px]:w-full border max-[480px]:px-1 rounded px-4 py-2'>
+                <h2 className=' text-[24px] dark:text-slate-200 max-[480px]:text-[15px] flex font-semibold justify-center'>FORGOT PASSWORD?</h2>
+                <p className='max-[480px]:text-[11px] dark:text-slate-200'>Enter the email address associated with your account.</p>
                 <form className=' w-full' onSubmit={handleSubmit}>
                     <div className='ms'>
                         <label htmlFor='newPassword'>
-                            <strong className='max-[480px]:text-[12px]'>Email</strong>
+                            <strong className='max-[480px]:text-[12px] dark:text-slate-200'>Email</strong>
                         </label>
                         <br />
-                        <input className=' border rounded-md h-7 w-full px-2 bg-slate-100' name='Email' value={email} type='text' required placeholder='input email here' id='email' onChange={(e)=> setEmail(e.target.value)} />
+                        <input className=' border max-sm:text-sm rounded-md h-7 w-full px-2 dark:bg-slate-300 bg-slate-100' name='Email' value={email} type='text' required placeholder='input email here' id='email' onChange={(e)=> setEmail(e.target.value)} />
                     </div>
                     <br />
                     <div>

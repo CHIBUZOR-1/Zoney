@@ -80,8 +80,6 @@ const ChatSidebar = () => {
             <div onClick={showModal1} className='flex items-center cursor-pointer p-1 rounded-full hover:border hover:border-green-500 justify-center hover:dark:bg-slate-300'>
               <IoMdAdd  className='text-[19px] dark:text-slate-100'/>
             </div>
-            
-            <IoSettingsSharp className='text-[19px] dark:text-slate-100' />
           </div>
         </div>
         <div className='p-2 w-full'>

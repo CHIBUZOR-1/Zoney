@@ -130,7 +130,7 @@ const SignUpPage = () => {
         <div className='flex space-x-2 justify-center items-center'>
           <div className='flex w-full flex-col'>
            <p className='dark:text-slate-200'>Date of Birth</p>
-           <input type="date" value={info.birthdate} name="birthdate" className='w-full outline-green-400 dark:bg-slate-800 dark:text-slate-50 p-1 border rounded-md' onChange={handleChange} required /> 
+           <input type="date" value={info.birthdate} name="birthdate" placeholder='choose date' className='w-full outline-green-400 dark:bg-slate-500 dark:text-slate-50 p-1 border rounded-md' onChange={handleChange} required /> 
           </div>
         </div>
         <div className='flex max-sm:flex-col space-x-2 justify-center items-center'>

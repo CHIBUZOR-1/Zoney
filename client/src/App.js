@@ -3,7 +3,6 @@ import HomePage from './Pages/HomePage';
 import LoginPage from './Pages/LoginPage';
 import SignUpPage from './Pages/SignUpPage';
 import ForgotPasswordPage from './Pages/ForgotPasswordPage';
-import PasswordResetPage from './Pages/PasswordResetPage';
 import NotificationPage from './Pages/NotificationPage';
 import PageNotFound from './Pages/PageNotFound';
 import ChatPage from './Pages/ChatPage';
@@ -17,6 +16,8 @@ import Friends from './Pages/Friends';
 import ProfilePage from './Pages/ProfilePage';
 import GroupChatContainer from './Components/GroupChatContainer';
 import VideosFeeds from './Pages/VideosFeeds';
+import ResetPassword from './Pages/ResetPassword';
+import VerifyEmail from './Pages/VerifyEmail';
 
 function App() {
   const [isLoading, setIsLoading] = useState(true); 
@@ -38,12 +39,13 @@ function App() {
       <Route path='/' element={isAuthenticated? <Navigate to="/home" /> : <LoginPage/>}/>
       <Route path='/signup' element={<SignUpPage/>}/>
       <Route path='/forgot-password' element={<ForgotPasswordPage/>}/>
-      <Route path='/reset-password/:token' element={<PasswordResetPage/>}/>
       <Route path='*' element={<PageNotFound/>}/>
       <Route path="/home" element={<PrivateRoute element={HomePage} />} />
       <Route path="/friends" element={<PrivateRoute element={Friends} />} />
       <Route path="/videos" element={<PrivateRoute element={VideosFeeds} />} />
       <Route path="/Profile/:id" element={<PrivateRoute element={ProfilePage} />} />
+      <Route path='/reset-password/:token' element={<ResetPassword/>}/>
+      <Route path='/verify-email/:token' element={<VerifyEmail/>}/>
       <Route path="/notifications" element={<PrivateRoute element={NotificationPage} />} /> 
       <Route path="/messages" element={<PrivateRoute element={ChatPage} />}> 
         <Route path=":id" element={<ChatContainer />} /> 

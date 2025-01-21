@@ -54,7 +54,7 @@ const AllRequests = () => {
 
 
   return (
-    <div className='pt-4 w-full overflow-hidden h-full flex flex-col gap-2 px-1'>
+    <div className='pt-14 w-full overflow-hidden h-full flex flex-col gap-2 px-1'>
         <div className='w-full flex gap-3 items-center'>
             <Link to={"/friends?view=my_friends"} className='sm:hidden'>
                 <IoArrowBackOutline className='text-slate-100' />

@@ -34,7 +34,7 @@ const AllFriends = () => {
   console.log('all friends', allFriends)
   console.log("mutualFrds", mutualFrds)
   return (
-    <div className='pt-4 h-full'>
+    <div className='pt-14 w-full h-full'>
         <div className='w-full p-1'>
             <h1 className='dark:text-slate-200 text-xl font-semibold'>All Friends ({formatNumber(allFriends.length)})</h1>
         </div>
