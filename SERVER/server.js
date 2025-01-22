@@ -48,7 +48,7 @@ app.use((req, res, next) => {
                 scriptSrc: ["'self'", `'nonce-${res.locals.nonce}'`, "https://www.gstatic.com", "https://www.googleapis.com", "https://apis.google.com"],
                 styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
                 imgSrc: ["'self'", "data:", "https://www.gstatic.com"],
-                connectSrc: ["'self'", "https://www.googleapis.com", "https://firebasestorage.googleapis.com", "https://identitytoolkit.googleapis.com"],
+                connectSrc: ["'self'", "https://www.googleapis.com", "https://firebasestorage.googleapis.com", "https://identitytoolkit.googleapis.com", "blob:"],
                 fontSrc: ["'self'", "https://fonts.gstatic.com"],
                 objectSrc: ["'none'"],
                 mediaSrc: ["'self'", "blob:"],
