@@ -51,7 +51,7 @@ app.use((req, res, next) => {
                 connectSrc: ["'self'", "https://www.googleapis.com", "https://firebasestorage.googleapis.com", "https://identitytoolkit.googleapis.com"],
                 fontSrc: ["'self'", "https://fonts.gstatic.com"],
                 objectSrc: ["'none'"],
-                mediaSrc: ["'self'"],
+                mediaSrc: ["'self'", "blob:"],
                 frameSrc: ["'self'", "https://mern-zoney.firebaseapp.com", "https://accounts.google.com"],
                 baseUri: ["'self'"],
                 formAction: ["'self'"],
