@@ -39,19 +39,22 @@ app.use((req, res, next) => {
     next();
 });
 
+
 app.use((req, res, next) => {
     helmet({
         contentSecurityPolicy: {
             directives: {
                 defaultSrc: ["'self'"],
-                scriptSrc: ["'self'", `'nonce-${res.locals.nonce}'`],
-                styleSrc: ["'self'", "'unsafe-inline'"],
-                imgSrc: ["'self'", "data:"],
-                connectSrc: ["'self'"],
-                fontSrc: ["'self'", "https:"],
+                scriptSrc: ["'self'", `'nonce-${res.locals.nonce}'`, "https://www.gstatic.com", "https://www.googleapis.com", "https://apis.google.com"],
+                styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+                imgSrc: ["'self'", "data:", "https://www.gstatic.com"],
+                connectSrc: ["'self'", "https://www.googleapis.com", "https://firebasestorage.googleapis.com"],
+                fontSrc: ["'self'", "https://fonts.gstatic.com"],
                 objectSrc: ["'none'"],
                 mediaSrc: ["'self'"],
-                frameSrc: ["'none'"]
+                frameSrc: ["'none'"],
+                baseUri: ["'self'"],
+                formAction: ["'self'"]
             }
         }
     })(req, res, next);
