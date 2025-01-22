@@ -135,6 +135,7 @@ const StoryReel = () => {
             scrollRef.current.scrollBy({ left: 300, behavior: 'smooth' });
         }
     };
+    const imgSrc = user?.profilePic ? (user?.profilePic.startsWith('http') || user?.profilePic.startsWith('blob:') ? user?.profilePic : `/${user?.profilePic}`) : null;
 
   return (
     <div className=' relative w-full'>
@@ -150,7 +151,7 @@ const StoryReel = () => {
         <div ref={scrollRef} onScroll={handleScroll} style={{ scrollBehavior: 'smooth' }} className="flex overflow-x-auto scrollbar-hide gap-3 p-1">
             <div className="flex-none justify-center h-44 w-32 rounded relative shadow  flex-col bg-white items-center"> 
                 <div className='w-full '>
-                    <img src={`/${user?.profilePic}`} className='h-[70%] absolute w-full object-fill rounded' alt="" />
+                    <img src={imgSrc} className='h-[70%] absolute w-full object-fill rounded' alt="" />
                 </div>
                 <div className="flex right-11 rounded-full border-white active:bg-green-400 cursor-pointer border-[3px] bg-green-700 absolute w-10 h-10  justify-center items-center bottom-[10%] mb-2"> 
                     <IoMdAdd onClick={showModal} className='text-white ' />
