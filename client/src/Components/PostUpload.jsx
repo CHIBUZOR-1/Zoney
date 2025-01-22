@@ -28,8 +28,7 @@ const PostUpload = () => {
         image: null,
         video: null
 
-    })
-    console.log(post)
+    });
     const switchUpload = () => {
         setOpenUpload(prev => !prev)
     }

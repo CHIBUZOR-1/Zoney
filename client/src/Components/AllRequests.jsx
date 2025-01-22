@@ -24,7 +24,6 @@ const AllRequests = () => {
         })
 
     };
-    console.log("mutualFrds", mutualFrds)
     const acceptRequest = async (requestId) => {
         try {
           const { data } = await axios.post('/api/requests/accept-request', { requestId });
@@ -50,7 +49,6 @@ const AllRequests = () => {
           setMutualFrds(prevState => ({ ...prevState, [id]: data.mutualFriends.length }));
         }
     }
-    console.log("fr",friendRequests)
 
 
   return (

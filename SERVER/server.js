@@ -6,6 +6,7 @@ const helmet = require('helmet');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const path = require("path");
+const crypto = require('crypto');
 const {app, server, io} = require('./Socket/index');
 require('../SERVER/Utils/CronJob');
 
@@ -33,15 +34,36 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true}));
 app.use(cookieParser());
 
+app.use((req, res, next) => {
+    res.locals.nonce = crypto.randomBytes(16).toString('base64'); // Generate nonce
+    next();
+});
+
+app.use((req, res, next) => {
+    helmet({
+        contentSecurityPolicy: {
+            directives: {
+                defaultSrc: ["'self'"],
+                scriptSrc: ["'self'", `'nonce-${res.locals.nonce}'`],
+                styleSrc: ["'self'", "'unsafe-inline'"],
+                imgSrc: ["'self'", "data:"],
+                connectSrc: ["'self'"],
+                fontSrc: ["'self'", "https:"],
+                objectSrc: ["'none'"],
+                mediaSrc: ["'self'"],
+                frameSrc: ["'none'"]
+            }
+        }
+    })(req, res, next);
+});
+
 
 
 const PORT = process.env.HOSTP;
 
 connectDB();
 
-app.get('/', (req, res) => {
-    res.send("Welcome to ZONEY");
- });
+
 
 app.use('/api/users', userRouter);
 app.use('/api/requests', requestRouter);
@@ -49,15 +71,15 @@ app.use('/api/posts', createPostRouter(io));
 app.use('/api/storys', createStoryRouter(io));
 app.use('/api/notifications', notificationRouter);
 app.use("/uploads", express.static('uploads'));
-/*app.use((err, req, res, next)=>{
-    const statusCode = err.statusCode || 500;
-    const message = err.message || 'Internal server error';
-    res.status(statusCode).json({
-        success: false,
-        statusCode,
-        message
-    });
-});*/
+app.use(express.static(path.join(__dirname, '../client/build')));
+
+app.get('*', (req, res)=> {
+    res.sendFile(path.resolve(__dirname, '../client/build', 'index.html'))
+})
+
+app.get('/', (req, res) => {
+    res.send("Welcome to ZONEY");
+ });
 
 server.listen(PORT, () => {
     console.log(`Server listening at http://localhost:${PORT}`);

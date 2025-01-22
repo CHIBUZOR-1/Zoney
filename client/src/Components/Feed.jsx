@@ -60,8 +60,6 @@ const Feed = () => {
     setAllPosts(allPosts.map(post => (post._id === updatedPost._id ? updatedPost : post)));
   };
 
-  console.log(allPosts)
-
   return (
     <div className='slopey pt-5 mb-3 flex w-[40%] px-1  max-md:pl-2  max-sm:w-full max-sm:px-1 flex-col justify-center'>
       <StoryReel />

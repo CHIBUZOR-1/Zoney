@@ -51,10 +51,6 @@ const LeftSidePanel = () => {
                   <CgProfile className='text-green-600 text-[25px]' />
                   <p className='font-semibold dark:text-white text-slate-600 text-[17px]'>Profile</p>
                 </Link>
-                <div className='flex px-1 py-2 dark:hover:bg-slate-400 rounded gap-3 items-center hover:bg-slate-300 cursor-pointer'>
-                  <IoMdNotifications className='text-slate-600 text-[25px]' />
-                  <p className='font-semibold dark:text-white text-slate-600 text-[17px]'>Notifications</p>
-                </div>
             </div>
             <div className='w-full flex gap-2 h-10 px-1 items-center bg-slate-600 border rounded'>
                 <SlLogout  className='text-white'/>

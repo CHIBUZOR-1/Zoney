@@ -31,8 +31,6 @@ const AllFriends = () => {
       setMutualFrds(prevState => ({ ...prevState, [id]: data.mutualFriends.length }));
     }
   }
-  console.log('all friends', allFriends)
-  console.log("mutualFrds", mutualFrds)
   return (
     <div className='pt-14 w-full h-full'>
         <div className='w-full p-1'>
@@ -72,7 +70,7 @@ const AllFriends = () => {
                         <div className='md:hidden'>
                           <Avatarz width={120} height={120} image={frd?.profileImg} name={(frd.firstname).toUpperCase()}/>
                         </div>
-                        <div>
+                        <div className='flex w-full flex-col items-center justify-center'>
                           <p className='md:text-sm font-semibold dark:text-slate-200'>{(frd.firstname + " "+ frd.lastname).toUpperCase()}</p>
                          <p className={` text-sm text-slate-500 font-medium dark:text-slate-300`}>{mutualFrds[frd?._id] ? (mutualFrds[frd?._id] + " mutual friends")  : "No mutual friends"}</p>
                         </div>

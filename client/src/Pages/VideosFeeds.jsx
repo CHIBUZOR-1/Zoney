@@ -57,7 +57,6 @@ const VideosFeeds = () => {
         setText('')
         handleUpdatePost(data.post); 
         setShow(false)
-        console.log(data.post)
         if (socket && pick?.user?._id !== users.id) { 
           socket.emit('commentz', { 
             from: users?.id, 
@@ -70,12 +69,10 @@ const VideosFeeds = () => {
       }
     }
     
-    console.log(newText)
     const handleLikeUnlikez = async (pick) => { 
       try { 
         const {data} = await axios.post(`/api/posts/like/${pick?._id}`); 
         handleUpdatePost(data.updatedPost); 
-        console.log(data.updatedPost)
         if (socket && !pick.likes.includes(users.id) && pick?.user?._id !== users?.id) { 
           socket.emit('postLiked', { 
             from: users.id, 
@@ -108,7 +105,6 @@ const VideosFeeds = () => {
       setShow(prev=> !prev)
     }
     const vid = allPosts.filter(pst => pst.video);
-    //(allPosts.length === 0 || !allPosts.some(pst => pst.video)) && !loading &&
   return (
     <Layout>
         <div className='w-full flex overflow-hidden dark:bg-facebookDark-500 bg-slate-100 h-full'>

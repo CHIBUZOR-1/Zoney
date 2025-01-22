@@ -22,8 +22,6 @@ const Postz = ({onUpdatePostz, path, onClick, onDelete, post}) => {
   const [drop, setDrop] = useState(false)
   const [loader, setLoader] = useState(false);
   const [show, setShow] = useState(false)
-  console.log("path",basePath1);
-  console.log(post)
 
   const commentPost = async(e)=> {
     e.stopPropagation();
@@ -32,7 +30,6 @@ const Postz = ({onUpdatePostz, path, onClick, onDelete, post}) => {
       setText('')
       onUpdatePostz(data.post); 
       setShow(false)
-      console.log(data.post)
       if (socket && post?.user?._id !== users.id) { 
         socket.emit('commentz', { 
           from: users?.id, 
@@ -57,12 +54,10 @@ const Postz = ({onUpdatePostz, path, onClick, onDelete, post}) => {
       setLoader(false)
     }
   }
-  console.log(newText)
   const handleLikeUnlikez = async () => { 
     try { 
       const {data} = await axios.post(`/api/posts/like/${post._id}`); 
       onUpdatePostz(data.updatedPost); 
-      console.log(data.updatedPost)
       if (socket && !post.likes.includes(users.id) && post?.user?._id !== users?.id) { 
         socket.emit('postLiked', { 
           from: users.id, 

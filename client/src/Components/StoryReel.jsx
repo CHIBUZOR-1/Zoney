@@ -6,9 +6,11 @@ import { FaAngleRight } from "react-icons/fa6";
 import axios from 'axios';
 import { Modal } from 'antd';
 import { useAuth } from '../Context/AppContext';
+import { useSelector } from 'react-redux';
 
 
 const StoryReel = () => {
+    const user = useSelector(state => state?.user?.user)
     const [storys, setStorys] = useState([]);
     const scrollRef = useRef(null);
     const [showLeftButton, setShowLeftButton] = useState(false);
@@ -16,7 +18,6 @@ const StoryReel = () => {
     const [showRightButton, setShowRightButton] = useState(true);
     const [medias, setMedia] = useState(null);
     const [loading, setLoading] = useState(false)
-    const [loading1, setLoading1] = useState(false)
     const [mediaType, setMediaType] = useState('');
     const { socket } = useAuth();
 
@@ -134,9 +135,7 @@ const StoryReel = () => {
             scrollRef.current.scrollBy({ left: 300, behavior: 'smooth' });
         }
     };
-    console.log(storys)
 
-    const image = "https://th.bing.com/th/id/R.1a55f5ba7e7b362606d795d937c1a756?rik=9kFAUyaW%2fndJzg&riu=http%3a%2f%2fimages.unsplash.com%2fphoto-1518568814500-bf0f8d125f46%3fixlib%3drb-1.2.1%26q%3d80%26fm%3djpg%26crop%3dentropy%26cs%3dtinysrgb%26w%3d1080%26fit%3dmax%26ixid%3deyJhcHBfaWQiOjEyMDd9&ehk=%2fv8YRvLrlL4HUO0ZkMIErygOtLDDjC25LZlmksp6Ttc%3d&risl=&pid=ImgRaw&r=0";
   return (
     <div className=' relative w-full'>
         {showLeftButton && (
@@ -151,7 +150,7 @@ const StoryReel = () => {
         <div ref={scrollRef} onScroll={handleScroll} style={{ scrollBehavior: 'smooth' }} className="flex overflow-x-auto scrollbar-hide gap-3 p-1">
             <div className="flex-none justify-center h-44 w-32 rounded relative shadow  flex-col bg-white items-center"> 
                 <div className='w-full '>
-                    <img src={image} className='h-[70%] absolute w-full object-cover rounded' alt="" />
+                    <img src={`/${user?.profilePic}`} className='h-[70%] absolute w-full object-fill rounded' alt="" />
                 </div>
                 <div className="flex right-11 rounded-full border-white active:bg-green-400 cursor-pointer border-[3px] bg-green-700 absolute w-10 h-10  justify-center items-center bottom-[10%] mb-2"> 
                     <IoMdAdd onClick={showModal} className='text-white ' />

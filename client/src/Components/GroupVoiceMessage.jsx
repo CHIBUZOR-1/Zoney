@@ -4,16 +4,17 @@ import Avatarz from './Avatar';
 import { FaPlay, FaStop } from 'react-icons/fa6';
 import { useSelector } from 'react-redux';
 
-const VoiceMessage = ({message, userz}) => {
+const GroupVoiceMessage = ({ message }) => {
     const user = useSelector(state => state?.user?.user)
     const [audio, setAudio] = useState(null);
     const [isPlaying, setIsPlaying] = useState(false);
     const [currentPlaybackTime, setCurrentPlaybackTime] = useState(0);
     const [totalDuration, setTotalDuration] = useState(0)
-
+    
     const waveFormRef = useRef(null);
     const waveForm = useRef(null);
     const initialized = useRef(false); // Track initialization
+
     useEffect(()=> {
         if(audio) {
             const updatePlaybackTime = () => {
@@ -58,7 +59,7 @@ const VoiceMessage = ({message, userz}) => {
             setTotalDuration(waveForm.current.getDuration());
         });
         
-    },[message?.audio])
+    },[message?.audio]);
 
     const initializeAudioContext = async () => { 
         if (!initialized.current && waveForm.current && waveForm.current.backend && waveForm.current.backend.ac) { 
@@ -96,10 +97,10 @@ const VoiceMessage = ({message, userz}) => {
     <div className='flex items-center gap-2'>
         <div>
             {
-                message.byUser === user?.id ? (
+                message?.sender?._id === user?.id ? (
                     <Avatarz height={30} width={30} image={user?.profilePic} name={(user?.firstname + " " + user?.lastname).toUpperCase()} />  
                 ) : (
-                    <Avatarz height={30} width={30} image={userz?.image} name={(userz?.firstname + " " + userz.lastname).toUpperCase()} /> 
+                    <Avatarz height={30} width={30} image={message?.sender?.profileImg} name={(message?.sender?.firstname + " " + message?.sender?.lastname).toUpperCase()} /> 
                 )
             }
           
@@ -113,7 +114,7 @@ const VoiceMessage = ({message, userz}) => {
         <div className="relative">
             <div className='w-52'ref={waveFormRef}/>
             <div className='text-[11px] pt-1 flex justify-between absolute w-full bottom-[-22px]'>
-                <span>
+                <span className='font-semibold'>
                     {
                         formatTime(isPlaying ? currentPlaybackTime : totalDuration)
                     }
@@ -124,4 +125,4 @@ const VoiceMessage = ({message, userz}) => {
   )
 }
 
-export default VoiceMessage
+export default GroupVoiceMessage

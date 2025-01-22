@@ -22,10 +22,9 @@ import { useTheme } from '../Context/ThemeContext';
 
 
 const ChatContainer = () => {
-  const { socket, setMessagez, messagez } = useAuth();
+  const { socket } = useAuth();
   const { bgd } = useTheme();
   const user = useSelector(state=> state?.user?.user);
-  console.log(messagez)
   const [openUploads, setOpenUploads] = useState(false);
   const [allMessages, setAllMessages] = useState([])
   const [details, setDetails] = useState({
@@ -35,7 +34,7 @@ const ChatContainer = () => {
     online: false,
     image: ""
   });
-  const emojiRef = useRef(null)
+  const emojiRef = useRef(null);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   useEffect(()=> {
     function clickOutside(event) {
@@ -68,7 +67,6 @@ const ChatContainer = () => {
     video: "",
     voiceClip: ""
   })
-  console.log(messages)
   const params = useParams();
   useEffect(()=> {
     if(socket){
@@ -77,13 +75,10 @@ const ChatContainer = () => {
       socket.emit("seen", params.id)
       
       socket.on('message-user', (data)=>{
-        console.log('user', data)
         setDetails(data)
       })
       socket.on("message", (data)=> {
-        console.log("message", data)
         setAllMessages(data)
-        setMessagez(data)
       })
       setMessages({ text: "", image: "", video: "", voiceClip: "" });
     }
@@ -160,7 +155,6 @@ const ChatContainer = () => {
       }
     }
   }
-  console.log("tails", details._id)
   
 
   const handleStopRecording = useCallback((audioBlob) => { 
@@ -217,8 +211,8 @@ const ChatContainer = () => {
                     } 
                   </div>
                   <div className='flex gap-2 items-center'>
-                    <p className='px-3'>{convo.text}</p>
-                    <p className='text-xs ml-auto w-fit'>{calculateTime(convo?.createdAt)}</p>
+                    <p className='px-3 font-medium'>{convo.text}</p>
+                    <p className='text-xs font-medium ml-auto w-fit'>{calculateTime(convo?.createdAt)}</p>
                   </div>
                   
                 </div>

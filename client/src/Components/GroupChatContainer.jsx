@@ -7,7 +7,6 @@ import { CiMenuKebab } from 'react-icons/ci';
 import Avatarz from './Avatar';
 import { IoIosArrowBack, IoMdAdd, IoMdSend, IoMdVideocam } from 'react-icons/io';
 import { calculateTime, formatNumber } from '../Client-Utils/CalculateTime';
-import VoiceMessage from './VoiceMessage';
 import { MdModeEdit, MdOutlineClose } from 'react-icons/md';
 import VoiceRecorder from './VoiceRecorder';
 import { BsFillMicFill } from 'react-icons/bs';
@@ -16,6 +15,7 @@ import { LiaImageSolid } from 'react-icons/lia';
 import EmojiPicker from 'emoji-picker-react';
 import { Modal } from 'antd';
 import { useTheme } from '../Context/ThemeContext';
+import GroupVoiceMessage from './GroupVoiceMessage';
 
 const GroupChatContainer = () => {
     const { socket } = useAuth(); 
@@ -46,8 +46,6 @@ const GroupChatContainer = () => {
     });
     const emojiRef = useRef(null); 
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-    console.log(params);
-    console.log(allMessages);
     useEffect(() => { 
         function clickOutside(event) { 
             if (emojiRef.current && !emojiRef.current.contains(event.target)) { 
@@ -94,7 +92,6 @@ const GroupChatContainer = () => {
     const handleUploadz = () => { 
         setOpenUploads(prev => !prev); 
     }; 
-    console.log('jj',noti)
     const uploadImg = (e) => { 
         const file = e.target.files[0]; 
         setMessages(prev => ({ ...prev, image: file })); 
@@ -106,7 +103,6 @@ const GroupChatContainer = () => {
       const file = e.target.files[0]
       setGrpImg(file)
     }
-    console.log(groupDetails)
 
     const handleModal = ()=> {
       setModalOpen(prev => !prev)
@@ -137,15 +133,12 @@ const GroupChatContainer = () => {
     }
     const submitGroupinfo = async(e) => { 
         e.preventDefault(); 
-        console.log('sat')
         let imageUrlz = null; 
         if(grpImg) { 
-          console.log('grpImg is defined');
           imageUrlz = await handleFileUpload(grpImg); 
         }
         if(imageUrlz || newGroupName) {
           if(socket) {
-            console.log('socket is defined');
             socket.emit('updateGroupInfo', { 
               groupId: groupDetails?._id,
               name: newGroupName, 
@@ -154,16 +147,10 @@ const GroupChatContainer = () => {
             }); 
             setGrpImg(null); 
             setNewGroupName('');
-            console.log('sat1')
           }
-          console.log('sat2')
         }
-        console.log('sat3')
        
     };
-    console.log(newGroupName)
-    console.log(allMessages);
-    console.log(messages)
     const handleEmojiClick = (emojiObj) => { 
         setMessages(prev => ({ ...prev, text: prev.text + emojiObj.emoji })); 
     };
@@ -299,7 +286,7 @@ const GroupChatContainer = () => {
                           {
                             convo?.image && (
                               <div className='w-full max-sm:w-48 max-sm:h-52'>
-                                <img src={`/${convo?.image}`} className='w-full h-full object-scale-down' alt="" />
+                                <img src={`/${convo?.image}`} className='w-full h-full max-sm:object-fill object-scale-down' alt="" />
                               </div>
                             )
                           }
@@ -315,12 +302,12 @@ const GroupChatContainer = () => {
                         </div>
                         <div> 
                           {
-                            convo?.audio && <VoiceMessage userz={groupDetails} message={convo}/>
+                            convo?.audio && <GroupVoiceMessage  message={convo}/>
                           } 
                         </div>
                         <div className='flex gap-2 items-center'>
-                            <p className='px-3'>{convo.text}</p>
-                            <p className='text-xs ml-auto w-fit'>{calculateTime(convo?.createdAt)}</p>
+                            <p className='px-3 font-medium'>{convo.text}</p>
+                            <p className='text-xs ml-auto font-medium w-fit'>{calculateTime(convo?.createdAt)}</p>
                         </div>
                       </div>
                     )

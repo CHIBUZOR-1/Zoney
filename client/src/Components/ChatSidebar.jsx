@@ -19,7 +19,6 @@ const ChatSidebar = () => {
   const chatz = useSelector(state => state?.user?.chatUsers);
   const groupz = useSelector(state => state?.user?.groupChats);
   const users = useSelector(state => state.user.user);
-  console.log('groups:', groupz);
   const { socket } = useAuth();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOpen1, setIsModalOpen1] = useState(false);
@@ -101,6 +100,24 @@ const ChatSidebar = () => {
               <div>
                 <h3 className='text-ellipsis dark:text-slate-100 font-semibold text-base line-clamp-1'>{isGroup ? conv.name : (conv?.userDetails?.firstname + " " + conv?.userDetails?.lastname).toUpperCase()}</h3>
                 <div>
+                  {conv?.lastMsg.image && (
+                      <div className='flex gap-1 text-slate-500 items-center'>
+                        <span className='text-sm'><FaImage /></span>
+                        {!conv?.lastMsg.text && <span className='text-sm'>Image</span>}
+                      </div>
+                  )}
+                  {conv?.lastMsg.video && (
+                      <div className='flex gap-1 text-slate-500 items-center'>
+                        <span className='text-sm'><FaVideo /></span>
+                        {!conv?.lastMsg.text && <span className='text-sm'>Video</span>}
+                      </div>
+                  )}
+                  {conv?.lastMsg.audio && (
+                      <div className='flex gap-1 text-slate-500 items-center'>
+                        <span className='text-sm'><FaMicrophone /></span>
+                        {!conv?.lastMsg.text && <span className='text-sm'>Audio</span>}
+                      </div>
+                  )}
                   <p className='text-sm dark:text-slate-400 text-ellipsis line-clamp-1 text-slate-500'>{conv?.lastMsg?.text}</p>
                 </div>
               </div>

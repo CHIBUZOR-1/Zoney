@@ -21,6 +21,7 @@ import ProfileFrdList from '../Components/ProfileFrdList';
 import FullViewPost from '../Components/FullViewPost';
 import { IoIosArrowDropdownCircle } from 'react-icons/io';
 import ReactLoading from 'react-loading'
+import { formatNumber } from '../Client-Utils/CalculateTime';
 
 
 const ProfilePage = () => {
@@ -37,6 +38,7 @@ const ProfilePage = () => {
   const [isModalOpen3, setIsModalOpen3] = useState(false);
   const [relationshipStatus, setRelationshipStatus] = useState('');
   const [incomingRequestDrp, setIncomingRequestDrp] = useState(false);
+  const [detailzLoad, setDetailzLoad] = useState(false);
   const [aboutz, updateAboutz]= useState({
     bio: '',
     city: '',
@@ -86,6 +88,7 @@ const ProfilePage = () => {
     }
   }
   const getDetails = async() => {
+    setDetailzLoad(true)
     const {data} = await axios.get(`/api/users/user-details/${params.id}`)
     if(data.success) {
       setDetails(data.details)
@@ -102,6 +105,7 @@ const ProfilePage = () => {
         worksAt: data.details.about.worksAt,
         education: data.details.about.education
       })
+      setDetailzLoad(false)
     }
   }
 
@@ -113,8 +117,6 @@ const ProfilePage = () => {
       setSelectedPost1(window.location.pathname); 
     } 
   };
-
-  console.log(detailz.about);
 
 
   useEffect(() => { console.log("Current image state:", img); }, [img]);
@@ -155,12 +157,10 @@ const ProfilePage = () => {
     
 }, [params?.id, user?.id]);
 
-console.log(relationshipStatus);
 const updateAbout = async()=> {
   setAbtLoader(true)
   const { data }= await axios.put('/api/users/update-about', aboutz);
   if(data.success) {
-    console.log('inc', data.user )
     setDetails(prevDetails => ({ ...prevDetails, about: data.user.about }));
     updateAboutz({
       bio: data.user.about.bio,
@@ -175,7 +175,6 @@ const updateAbout = async()=> {
     setIsModalOpen3(false)
   }
 }
-console.log(detailz?.about)
 
 const handleInputChange = (e) => { 
   setNewDetails({...newDetails, [e.target.name]: e.target.value}); 
@@ -261,8 +260,6 @@ const updateOnDelete = (postId)=> {
 }
 
 
-console.log(img);
-console.log(newDetails);
 
   const startCamera = async()=> {
     stream = await navigator.mediaDevices.getUserMedia({
@@ -273,12 +270,12 @@ console.log(newDetails);
     setStream(stream);
     setHide(true)
   }
-  //new Date(detailz?.birthdate).toISOString().split('T')[0]
 
   const stopCamera = () => { 
     if (stream) { 
       stream.getTracks().forEach(track => track.stop()); 
     } 
+    setHide(false)
   };
   const uploadImg = (e) => {
     const file = e.target.files[0]
@@ -296,23 +293,15 @@ const capturePhoto = () => {
   const originalWidth = videoRef.current.videoWidth;
   const originalHeight = videoRef.current.videoHeight;
   
-  // Reduce the canvas size for compression
-  const targetWidth = 300;
-  const targetHeight = (originalHeight / originalWidth) * targetWidth;
-  
-  canvas.width = targetWidth;
-  canvas.height = targetHeight;
-  
   // Draw the video frame onto the canvas
   const ctx = canvas.getContext("2d");
-  ctx.drawImage(videoRef.current, 0, 0, targetWidth, targetHeight);
+  ctx.drawImage(videoRef.current, 0, 0, originalWidth, originalHeight);
   
-  // Convert the canvas content to a base64 string with a lower quality
-  //const compressedDataUrl = canvas.toDataURL("image/jpeg", 0.7); // 0.7 = 70% quality
   canvas.toBlob(blob => { 
-    const file = new File([blob], "photo.jpg", { type: "image/jpeg" }); // Set the file object to the img state 
+    // Set the file object to the img state
+    const file = new File([blob], "photo.jpg", { type: "image/jpeg" });  
     setImg(file); 
-  }, 'image/jpeg', 0.7)
+  }, 'image/jpeg') // No quality parameter for no compression
   
   
   stopCamera();
@@ -422,9 +411,6 @@ const handleCancel3 = () => {
   setIsModalOpen3(false);
 };
 
-
-  console.log("details",detailz)
-  console.log('req', requestz)
   const tabs = ['Posts', 'About', 'Photos', 'Friends']; 
   const content = { 
     'Posts': 
@@ -490,7 +476,11 @@ const handleCancel1 = () => {
 const handleCancel2 = () => {
   setIsModalOpen2(false);
   setImg(null)
+  stopCamera();
+  setHide(false)
 };
+
+const friendsCount = detailz?.friends ? detailz.friends.length : 0;
   
   return (
     <Layout>
@@ -508,10 +498,17 @@ const handleCancel2 = () => {
               <Avatarz height={95} image={detailz?.profileImg}  width={95} name={(detailz?.firstname + " " + detailz?.lastname).toUpperCase()} />
               <div onClick={showModal2} className={`absolute ${params.id === user?.id ? "block": "hidden"} cursor-pointer rounded-full w-8 h-8 bottom-1 p-2 bg-slate-200 flex items-center justify-center -right-2 shadow`}><FaCamera /></div>
             </div>
-            <div className='flex-grow md:text-left mt-4 md:mt-0 text-center'>
-              <h1 className='font-bold dark:text-slate-200'>{(detailz?.firstname + " " + detailz?.lastname).toUpperCase()}</h1>
-              <p className='text-gray-500 dark:text-slate-200'>1k friends</p>
-            </div>
+            {
+              detailzLoad ? 
+              <div className='flex-grow md:text-left mt-4 md:mt-0 text-center'>
+                <h1 className='font-bold animate-pulse h-5 w-20 bg-slate-400 dark:text-slate-200'></h1>
+                <p className='text-gray-500 h-4 w-16 animate-pulse bg-slate-400 dark:text-slate-200'></p>
+              </div> : 
+              <div className='flex-grow md:text-left mt-4 md:mt-0 text-center'>
+                <h1 className='font-bold dark:text-slate-200'>{(detailz?.firstname + " " + detailz?.lastname).toUpperCase()}</h1>
+                <p className='text-gray-500 dark:text-slate-200'>{formatNumber(friendsCount)} friends</p>
+              </div>
+            }
             <div className='flex gap-2'>
               {
                 relationshipStatus === 'request_received'  && (
@@ -656,7 +653,11 @@ const handleCancel2 = () => {
               <button className='absolute bg-slate-500 p-2 border bottom-3 left-3' onClick={capturePhoto}>Capture Photo</button> 
             </div>
             <div className='flex gap-2 justify-center items-center'>
-              <button onClick={startCamera} className={` mt-4 justify-center  md:mt-0 right-4 w-[50%] bottom-4 flex gap-2 cursor-pointer items-center p-1 px-1 rounded font-medium text-sm bg-slate-300`}>Take Photo</button>
+              {
+                hide? <button onClick={stopCamera} className={` mt-4 justify-center  md:mt-0 right-4 w-[50%] bottom-4 flex gap-2 cursor-pointer items-center p-1 px-1 rounded font-medium text-sm active:bg-slate-500 bg-slate-300`}>Cancel</button> : 
+                <button onClick={startCamera} className={` mt-4 justify-center  md:mt-0 right-4 w-[50%] bottom-4 flex gap-2 cursor-pointer items-center p-1 px-1 rounded font-medium text-sm active:bg-slate-500 bg-slate-300`}>Take Photo</button>
+              }
+              
               <button onClick={()=> profileImgRef.current.click()} className={` mt-4 active:bg-slate-700 active:text-slate-200 justify-center md:mt-0 right-4 w-[50%] bottom-4 flex gap-2 cursor-pointer items-center p-1 px-1 rounded font-medium text-sm bg-slate-300`}>Upload photo</button>
               <input onChange={uploadImg} ref={profileImgRef} hidden accept='image/*' type="file" />
             </div>
@@ -668,7 +669,7 @@ const handleCancel2 = () => {
         </Modal>
         <Modal open={isModalOpen3} className='custom-modal' footer={null} onCancel={handleCancel3}>
           <div className='w-full flex flex-col gap-2'>
-            <h2 className='w-full'>Edit Bio</h2>
+            <h2 className='w-full dark:text-slate-200 text-xl'>Edit Bio</h2>
             <div className='w-full'>
               <textarea onChange={handleInputChange1} value={aboutz.bio} placeholder='About self...' className='border p-1 w-full border-green-300 rounded-md outline outline-green-300' name="bio" id=""></textarea>
             </div>
@@ -679,7 +680,7 @@ const handleCancel2 = () => {
               <input onChange={handleInputChange1} value={aboutz.education} className='border rounded-md w-full p-1 outline font-semibold outline-green-500 bg-slate-200' type="text" name='education' placeholder='education'/>
             </div>
             <div className='w-full flex items-center justify-center'>
-              <button onClick={updateAbout} className={`${abtLoader? "animate-pulse": "animate-none"} w-[70%] font-semibold active:bg-green-800 p-1 rounded-md cursor-pointer bg-green-600 text-slate-200`}>{abtLoader? 'please wait...' : 'update'}</button>
+              <button onClick={updateAbout} className={`${abtLoader? "animate-pulse": "animate-none"} w-[70%] font-semibold active:bg-green-800 p-1 rounded-md cursor-pointer bg-green-600 text-slate-50`}>{abtLoader? 'please wait...' : 'update'}</button>
             </div>
           </div>
         </Modal>

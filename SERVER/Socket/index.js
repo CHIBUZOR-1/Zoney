@@ -64,7 +64,6 @@ const onlineUser = new Set();
 
 io.on("connection", async (socket) => {
   try {
-    console.log("user", socket.id);
     const token = socket.handshake.auth.token;
     const user = await getDetailsFromToken(token);
 
@@ -79,7 +78,6 @@ io.on("connection", async (socket) => {
     io.emit('onlineUser', Array.from(onlineUser));
 
     socket.on('chats', async (userId) => {
-      console.log(userId);
       const userDetails = await userModel.findById(userId);
       const payload = {
         _id: userDetails?._id,
@@ -203,7 +201,6 @@ io.on("connection", async (socket) => {
 
     // Group Chat Messages 
     socket.on('groupMessage', async ({ groupId, sender, text, imageUrl, videoUrl, voiceUrl  }) => {
-      //const grpConv = await groupModel.findOne({_id: groupId}) 
       const groupMessage = new groupMessageModel({ 
         group: groupId, 
         sender, 
@@ -337,144 +334,6 @@ io.on("connection", async (socket) => {
   }
 });
 
-/*io.on("connection", async(socket)=> {
-    console.log("user", socket.id);
-    const token = socket.handshake.auth.token;
-    const user = await getDetailsFromToken(token)
-    
-    socket.join(user?._id?.toString());
-    onlineUser.add(user?._id?.toString());
-
-    io.emit('onlineUser', Array.from(onlineUser));
-
-    socket.on('chats', async(userId)=> {
-      console.log(userId)
-      const userDetails = await userModel.findById(userId) 
-      const payload = {
-        _id: userDetails?._id,
-        firstname: userDetails?.firstname,
-        lastname: userDetails?.lastname,
-        online: onlineUser.has(userId),
-        image: userDetails.profileImg
-      }
-      socket.emit('message-user', payload)
-      //old messages
-      const getDialogue = await conversationModel.findOne({
-        "$or": [
-          {sender: user?._id, receiver: userId},
-          {sender: userId, receiver: user?._id}
-        ]
-      }).populate("message").sort({updatedAt: -1})
-      socket.emit("message", getDialogue?.message || [])
-
-    })
-
-    // new messages
-    socket.on('new message', async(data)=> {
-      console.log(data)
-      let dialogue = await conversationModel.findOne({
-        "$or": [
-          {sender: data?.sender, receiver: data?.receiver},
-          {sender: data?.receiver, receiver: data?.sender}
-        ]
-      })
-      console.log(dialogue)
-      if(!dialogue) {
-        const newDialogue = await conversationModel({
-          sender: data?.sender,
-          receiver: data?.receiver
-        })
-        dialogue = await newDialogue.save();
-      }
-      const message = new messageModel({
-        text: data?.text,
-        image: data?.imageUrl,
-        video: data?.videoUrl,
-        audio: data?.voiceUrl,
-        byUser: data?.sentBy
-      })
-      const chat = await message.save();
-      const updateDialogue = await conversationModel.updateOne({_id: dialogue?._id}, {
-        $push: {message: chat?._id}
-      })
-
-      const getDialogue = await conversationModel.findOne({
-        "$or": [
-          {sender: data?.sender, receiver: data?.receiver},
-          {sender: data?.receiver, receiver: data?.sender}
-        ]
-      }).populate("message").sort({updatedAt: -1})
-
-      io.to(data?.sender).emit("message", getDialogue.message || [])
-      io.to(data?.receiver).emit("message", getDialogue.message || [])
-
-      const convoSender = await getDialoguez(data?.sender)
-      const convoReceiver = await getDialoguez(data?.receiver)
-
-      io.to(data?.sender).emit("convoUser", convoSender)
-      io.to(data?.receiver).emit("convoUser", convoReceiver)
-    })
-    //Liked Post
-    socket.on('postLiked', async ({ from, to, liked }) => {
-      if (liked) {  // Only emit if the post is liked
-          const notification = new notificationModel({
-              from,
-              to,
-              type: 'liked'
-          });
-          await notification.save();
-          
-          io.to(to).emit('newNotification', notification);
-      }
-    });
-
-    // Comment on post
-    socket.on('commentz', async({from, to})=> {
-      const notification = new notificationModel({
-        from,
-        to,
-        type: 'comment',
-        read: false
-      });
-      await notification.save();
-          
-      io.to(to).emit('newNotification', notification);
-    })
-  
-
-    //sidebar
-    socket.on("sidebar", async(data)=> {
-      const dialogues = await getDialoguez(data);
-      socket.emit("convoUser", dialogues)
-    })
-
-    socket.on("seen", async(data)=> {
-      let conversation = await conversationModel.findOne({
-        "$or": [
-          {sender: user?._id, receiver: data},
-          {sender: data, receiver: user?._id}
-        ]
-      })
-      console.log("c", conversation)
-
-      const conversationMsgId = conversation?.message || [];
-      const updateMsgs = await messageModel.updateMany(
-        { _id: {"$in" : conversationMsgId}, byUser : data}, 
-        {"$set" : {seen: true}}
-      )
-      const convoSender = await getDialoguez(user?._id?.toString())
-      const convoReceiver = await getDialoguez(data)
-
-      io.to(user?._id?.toString()).emit("convoUser", convoSender)
-      io.to(data).emit("convoUser", convoReceiver)
-    })
-
-    socket.on("disconnect", ()=> {
-        onlineUser.delete(user?._id?.toString());
-        console.log('User Disconnected');
-        io.emit('onlineUser', Array.from(onlineUser));
-    })
-});*/
 
 
 module.exports = { upload, app, server, io }

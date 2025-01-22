@@ -24,7 +24,6 @@ const FriendRequests = () => {
     const rejectRequest = async(requestId) => {
         const {data} = await axios.post('/api/requests//reject-request', { requestId })
     }
-    console.log(friendRequests )
     const lastRequest = friendRequests[friendRequests.length -1];
 
 

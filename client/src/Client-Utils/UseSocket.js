@@ -8,7 +8,7 @@ const useSocket = () => {
   const { socket} = useAuth();
   const dispatch = useDispatch();
   const user = useSelector(state => state?.user?.user);
-  console.log(user)
+  
 
 
   useEffect(() => {
@@ -17,9 +17,7 @@ const useSocket = () => {
       socket.emit('fetchGroupDialogues', user?.id);
       socket.on('convoUser', handleConvoUser);
       socket.on('groupDialogues', handleGroupDialogues);
-      //socket.on('groupUpdated', handleGroupDialoguess);
       socket.on('groupCreated', (data) => { 
-        console.log('groupCreated event received', data.uId);
         socket.emit('fetchGroupDialogues', data.uId); 
       });
 
@@ -28,12 +26,10 @@ const useSocket = () => {
         socket.off('convoUser', handleConvoUser);
         socket.off('groupDialogues', handleGroupDialogues);
         socket.off('groupCreated');
-        //socket.off('groupUpdated', handleGroupDialogues);
       };
     }
   }, [socket, user?.id]);
   const handleConvoUser = (data) => {
-    console.log('single:', data);
     const convUserData = data.map((convUser) => {
       if (convUser?.sender?._id === convUser?.receiver?._id) {
         return {
@@ -56,7 +52,6 @@ const useSocket = () => {
   };
 
   const handleGroupDialogues = (data) => { 
-    console.log('groupDialogues:', data);
     dispatch(setGroupChats(data)); 
   };
 };

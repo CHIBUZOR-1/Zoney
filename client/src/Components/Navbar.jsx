@@ -53,6 +53,7 @@ const Navbar = () => {
   const dropdownRef2 = useRef(null); 
   const iconRef = useRef(null);
   const iconRef1 = useRef(null);
+  const searchInputRef = useRef(null);
 
   useEffect(()=> {
       handleSearch()
@@ -75,6 +76,12 @@ const Navbar = () => {
       
 }, [socket]);
 
+useEffect(() => {
+        if (isFocused && searchInputRef.current) {
+            searchInputRef.current.focus();
+        }
+}, [isFocused]);
+
   const getNotifications = async() => {
     setLoading1(true)
     const {data}= await axios.get('/api/notifications/all-notifications');
@@ -84,7 +91,6 @@ const Navbar = () => {
       setLoading1(false)
     }
   }
-  console.log('notify', notificationz)
 
   const markAllAsRead = () => {
     setUnreadCount(0);
@@ -109,12 +115,6 @@ const Navbar = () => {
       setPhrase("");
     } 
   };
-
-  /*const handleClickOutside = (event) => { 
-    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) { 
-        setDropdownVisible(false); 
-    } 
-  };*/
   
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside); 
@@ -124,11 +124,6 @@ const Navbar = () => {
   }, []);  
   
   useEffect(() => { 
-    /*if (dropdownVisible) { 
-      document.addEventListener('mousedown', handleClickOutside); 
-    } else { 
-      document.removeEventListener('mousedown', handleClickOutside); 
-    }*/
     document.addEventListener("mousedown", handleClickOutside1); 
     return () => { 
       document.removeEventListener("mousedown", handleClickOutside1); 
@@ -216,10 +211,10 @@ const Navbar = () => {
         </form>
         <CiSearch onClick={() => setIsFocused(true)} className='text-[19px] max-sm:text-2xl font-bold md:hidden dark:text-white max-sm:cursor-pointer text-slate-500' />
         {isFocused && (
-                <div ref={dropdownRef2} className="absolute max-sm:w-screen z-50 flex flex-col gap-2 top-0 dark:bg-facebookDark-300 right-0 left-0 w-[75%] max-sm:h-screen bg-white shadow-lg rounded-lg p-2">
+                <div ref={dropdownRef2} className="absolute max-sm:w-screen z-50 flex flex-col gap-2 top-0 dark:bg-facebookDark-300 right-0 left-0 w-72 max-sm:h-screen bg-white shadow-lg rounded-lg p-2">
                   <div className='w-auto flex items-center gap-2'>
                     <button onClick={() => setIsFocused(false)} className="dark:text-gray-300 ml-2"> <IoMdArrowBack /> </button>
-                    <input value={phrase} onChange={(e)=> setPhrase(e.target.value)}  className='rounded-lg px-1 outline-none h-7 bg-slate-100' type="text" placeholder='search zoney' />
+                    <input value={phrase} ref={searchInputRef} onChange={(e)=> setPhrase(e.target.value)}  className='rounded-lg px-1 outline-none h-7 bg-slate-100' type="text" placeholder='search zoney' />
                   </div>
                   <div className='flex flex-col w-full'>
                     <p className="text-gray-600 dark:text-white">Recent searches</p>
@@ -237,14 +232,14 @@ const Navbar = () => {
                       )
                     }
                     {
-                      !phrase && search.length && !loading && (
+                      !phrase && search.length > 0 && !loading && (
                         <div className='w-full mt-1 items-center flex justify-center'>
                           <p className='dark:text-slate-300 text-slate-500'>No recent searches</p>
                         </div>
                       )
                     }
                     {
-                      search.length && phrase.length !== 0 && !loading && (
+                      search.length > 0 && phrase.length !== 0 && !loading && (
                         search.map((srch) => {
                           return(
                             <Link onClick={()=> setIsFocused(false)} to={`/profile/${srch?._id}`} key={srch?._id} className={`flex hover:bg-gray-500 w-full cursor-pointer items-center gap-3 p-2`}>

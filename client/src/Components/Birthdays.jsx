@@ -13,7 +13,6 @@ const Birthdays = () => {
       setBirthdays(data?.friendsWithBirthdayToday);
     }
   }
-  console.log(birthdays);
   const lastBirthday = birthdays[birthdays.length -1];
 
 
