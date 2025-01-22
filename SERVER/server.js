@@ -48,13 +48,13 @@ app.use((req, res, next) => {
                 scriptSrc: ["'self'", `'nonce-${res.locals.nonce}'`, "https://www.gstatic.com", "https://www.googleapis.com", "https://apis.google.com"],
                 styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
                 imgSrc: ["'self'", "data:", "https://www.gstatic.com"],
-                connectSrc: ["'self'", "https://www.googleapis.com", "https://firebasestorage.googleapis.com"],
+                connectSrc: ["'self'", "https://www.googleapis.com", "https://firebasestorage.googleapis.com", "https://identitytoolkit.googleapis.com"],
                 fontSrc: ["'self'", "https://fonts.gstatic.com"],
                 objectSrc: ["'none'"],
                 mediaSrc: ["'self'"],
-                frameSrc: ["'none'"],
+                frameSrc: ["'self'", "https://mern-zoney.firebaseapp.com", "https://accounts.google.com"],
                 baseUri: ["'self'"],
-                formAction: ["'self'"]
+                formAction: ["'self'"],
             }
         }
     })(req, res, next);
