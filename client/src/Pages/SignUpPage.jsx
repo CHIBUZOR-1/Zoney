@@ -96,27 +96,27 @@ const SignUpPage = () => {
         <div className='flex space-x-2 justify-center items-center'>
           <div className='flex w-full flex-col'>
             <p className='dark:text-slate-200'>Firstname</p>
-            <input name='firstname' id='firstname' value={info.firstname} onChange={handleChange} className='w-full dark:bg-slate-800 dark:text-slate-50 outline-green-400 p-1 border rounded-md' type="text" placeholder='input Firtname' />
+            <input name='firstname' id='firstname' value={info.firstname} onChange={handleChange} className='w-full dark:bg-slate-800 max-sm:text-sm dark:text-slate-50 outline-green-400 p-1 border rounded-md' type="text" placeholder='Firtname' />
           </div>
           <div className='flex w-full flex-col'>
             <p className='dark:text-slate-200'>Lastname</p>
-            <input name='lastname' value={info.lastname} onChange={handleChange} className='w-full p-1 dark:bg-slate-800 dark:text-slate-50 outline-green-400 border rounded-md' type="text" placeholder='input Lastname' />
+            <input name='lastname' value={info.lastname} onChange={handleChange} className='w-full p-1 dark:bg-slate-800 dark:text-slate-50 max-sm:text-sm outline-green-400 border rounded-md' type="text" placeholder='Lastname' />
           </div>
         </div>
         <div className='flex space-x-2 justify-center items-center'>
           <div className='flex w-full flex-col'>
             <p className='dark:text-slate-200'>Username</p>
-            <input name='username' value={info.username} onChange={handleChange} className='w-full dark:bg-slate-800 dark:text-slate-50 outline-green-400 p-1 border rounded-md' type="text" placeholder='input username' />
+            <input name='username' value={info.username} onChange={handleChange} className='w-full dark:bg-slate-800 dark:text-slate-50 max-sm:text-sm outline-green-400 p-1 border rounded-md' type="text" placeholder='Username' />
           </div>
           <div className='flex w-full flex-col'>
             <p className='dark:text-slate-200'>email</p>
-            <input name='email' value={info.email} onChange={handleChange} className='w-full p-1 dark:bg-slate-800 dark:text-slate-50 outline-green-400 border rounded-md' type="email" placeholder='input email' />
+            <input name='email' value={info.email} onChange={handleChange} className='w-full p-1 dark:bg-slate-800 dark:text-slate-50 max-sm:text-sm outline-green-400 border rounded-md' type="email" placeholder='Email' />
           </div>
         </div>
         <div className='flex space-x-2 justify-center items-center'>
           <div className='flex w-full flex-col'>
             <p className='dark:text-slate-200'>Phone</p>
-            <input name='phone' value={info.phone} onChange={handleChange} className='w-full dark:bg-slate-800 dark:text-slate-50 outline-green-400 p-1 border rounded-md' type="text" placeholder='input username' />
+            <input name='phone' value={info.phone} onChange={handleChange} className='w-full dark:bg-slate-800 dark:text-slate-50 max-sm:text-sm outline-green-400 p-1 border rounded-md' type="text" placeholder='Phone' />
           </div>
           <div className='flex w-full flex-col'>
             <p className='dark:text-slate-200'>Gender:</p>
@@ -130,17 +130,17 @@ const SignUpPage = () => {
         <div className='flex space-x-2 justify-center items-center'>
           <div className='flex w-full flex-col'>
            <p className='dark:text-slate-200'>Date of Birth</p>
-           <input type="date" value={info.birthdate} name="birthdate" placeholder='choose date' className='w-full outline-green-400 dark:bg-slate-500 dark:text-slate-50 p-1 border rounded-md' onChange={handleChange} required /> 
+           <input type="date" value={info.birthdate} name="birthdate" placeholder='choose date' className='w-full outline-green-400 max-sm:text-sm dark:bg-slate-500 dark:text-slate-50 p-1 border rounded-md' onChange={handleChange} required /> 
           </div>
         </div>
         <div className='flex max-sm:flex-col space-x-2 justify-center items-center'>
           <div className='flex w-full flex-col'>
             <p className='dark:text-slate-200'>Password</p>
-            <input name='password' id='password' value={info.password} onChange={handleChange} className='w-full dark:bg-slate-800 dark:text-slate-50 outline-green-400 p-1 border rounded-md' type="password" placeholder='input Firtname' />
+            <input name='password' id='password' value={info.password} onChange={handleChange} className='w-full dark:bg-slate-800 max-sm:text-sm dark:text-slate-50 outline-green-400 p-1 border rounded-md' type="password" placeholder='Password' />
           </div>
           <div className='flex w-full flex-col'>
             <p className='dark:text-slate-200'>Confirm Password</p>
-            <input name='confirmPassword' value={info.confirmPassword} onChange={handleChange} className='w-full dark:bg-slate-800 dark:text-slate-50 p-1 outline-green-400 border rounded-md' type="password" placeholder='input Lastname' />
+            <input name='confirmPassword' value={info.confirmPassword} onChange={handleChange} className='w-full dark:bg-slate-800 max-sm:text-sm dark:text-slate-50 p-1 outline-green-400 border rounded-md' type="password" placeholder='Confirm Passowrd' />
           </div>
         </div>
         <div className='flex w-full justify-center max-[400px]:text-[12px] max-[500px]:text-[14px] items-center space-x-2 px-1'>

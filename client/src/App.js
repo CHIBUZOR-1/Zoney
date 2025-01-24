@@ -19,6 +19,7 @@ import VideosFeeds from './Pages/VideosFeeds';
 import ResetPassword from './Pages/ResetPassword';
 import VerifyEmail from './Pages/VerifyEmail';
 import RegistrationNote from './Pages/RegistrationNote';
+import FullViewPost from './Components/FullViewPost';
 
 function App() {
   const [isLoading, setIsLoading] = useState(true); 
@@ -48,6 +49,7 @@ function App() {
       <Route path="/Profile/:id" element={<PrivateRoute element={ProfilePage} />} />
       <Route path='/reset-password/:token' element={<ResetPassword/>}/>
       <Route path='/verify-email/:token' element={<VerifyEmail/>}/>
+      <Route path="/postz/:postId" element={<FullViewPost />} />
       <Route path="/notifications" element={<PrivateRoute element={NotificationPage} />} /> 
       <Route path="/messages" element={<PrivateRoute element={ChatPage} />}> 
         <Route path=":id" element={<ChatContainer />} /> 

@@ -78,6 +78,21 @@ const ProfilePage = () => {
     getDetails()
     fetchRequests()
   }, [params.id]);
+  useEffect(() => {
+      if (selectedPost1 === null) {
+        setPrevUrl(location.pathname);
+      }
+    }, [selectedPost1, location.pathname]);
+  useEffect(() => {
+      window.onpopstate = function(event) {
+        if (event.state && event.state.postId) {
+          const post = myPosts.find(p => p.id === event.state.postId);
+          setSelectedPost1(post);
+        } else {
+          setSelectedPost1(null);
+        }
+      };
+    }, [myPosts]);
 
 
 
@@ -109,14 +124,7 @@ const ProfilePage = () => {
     }
   }
 
-  window.onpopstate = function(event) { 
-    if (event.state && event.state.postId) { 
-      const post = myPosts.find(p => p.id === event.state.postId); 
-      setSelectedPost1(post); 
-    } else { 
-      setSelectedPost1(window.location.pathname); 
-    } 
-  };
+  
 
 
   useEffect(() => { console.log("Current image state:", img); }, [img]);
@@ -136,7 +144,8 @@ const ProfilePage = () => {
   }; 
   const closePost1 = () => { 
     setSelectedPost1(null); 
-    history.pushState({}, '', prevUrl); 
+    window.history.back();
+    //history.replaceState({}, '', prevUrl); 
   };
 
   const profileId = params.id;
@@ -447,7 +456,7 @@ const handleCancel3 = () => {
       {
         myPosts.map((p, i)=> {
           return(
-            <Photos key={p._id} img={`/${p?.image}`} />
+            <Photos key={p._id} img={p?.image} vid={p?.video} />
           )
         })
       }
@@ -484,7 +493,7 @@ const friendsCount = detailz?.friends ? detailz.friends.length : 0;
   
   return (
     <Layout>
-      <div className='relative h-[100vh] dark:bg-facebookDark-200 mt-14'>
+      <div className='relative min-h-[100vh] overflow-y-auto dark:bg-facebookDark-200 mt-14'>
         <div className='relative h-52 bg-slate-300 overflow-hidden'>
           <img src={`/${detailz?.coverImg}` || ''} alt="" className='w-full cursor-pointer absolute inset-0 h-full object-cover' />
           <button  onClick={showModal} className={`right-4 ${params.id === user?.id ? "block": "hidden"} active:bg-blue-300 z-30 bottom-4 absolute flex gap-2 items-center p-1 rounded font-medium cursor-pointer text-sm bg-slate-50`}>

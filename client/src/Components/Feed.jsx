@@ -19,6 +19,21 @@ const Feed = () => {
   useEffect(()=> {
     getAllPost()
   }, [])
+  useEffect(() => {
+    if (selectedPost === null) {
+      setPrevUrl(location.pathname);
+    }
+  }, [selectedPost, location.pathname]);
+  useEffect(() => {
+    window.onpopstate = function(event) {
+      if (event.state && event.state.postId) {
+        const post = allPosts.find(p => p.id === event.state.postId);
+        setSelectedPost(post);
+      } else {
+        setSelectedPost(null);
+      }
+    };
+  }, [allPosts]);
 
   
     
@@ -36,20 +51,12 @@ const Feed = () => {
 
   }
   const showPost = (post) => { 
-    window.onpopstate = function(event) { 
-      if (event.state && event.state.postId) { 
-        const post = allPosts.find(p => p.id === event.state.postId); 
-        setSelectedPost(post); 
-      } else { 
-        setSelectedPost(window.location.pathname); 
-      } 
-    };
     setSelectedPost(post); 
     history.pushState({ postId: post?._id }, '', `/postz/${post?._id}`); 
   }; 
   const closePost = () => { 
     setSelectedPost(null); 
-    history.pushState({}, '', prevUrl); 
+    window.history.back(); 
   };
   
   const handleUpdatePost = (updatedPost) => { 

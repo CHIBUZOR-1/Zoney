@@ -73,10 +73,10 @@ const LoginPage = () => {
       <form onSubmit={handleSubmit} className='gap-4 border max-sm:w-full border-slate-400 pt-7 pb-4 rounded-md p-2 md:w-[50%] mx-auto '>
         <div className='flex flex-col space-y-5 justify-center items-center'>
           <div className='flex w-full'>
-            <input name='email' id='email' value={info.email} onChange={handleChange} className='w-full outline-green-400 dark:bg-facebookDark-800 dark:text-slate-50 p-1 border rounded-md' type="email" placeholder='input email' />
+            <input name='email' id='email' value={info.email} onChange={handleChange} className='w-full outline-green-400 dark:bg-facebookDark-800 dark:text-slate-50 p-1 border rounded-md' type="email" placeholder='email' />
           </div>
           <div className='flex w-full'>
-            <input  name='password' value={info.password} onChange={handleChange} className='w-full dark:bg-facebookDark-800 dark:text-slate-50 p-1 outline-green-400 border rounded-md' type="password" placeholder='input password' />
+            <input  name='password' value={info.password} onChange={handleChange} className='w-full dark:bg-facebookDark-800 dark:text-slate-50 p-1 outline-green-400 border rounded-md' type="password" placeholder='password' />
           </div>
         </div>
         <div className='text-blue-500 mt-1 w-full max-[500px]:text-sm flex '>
