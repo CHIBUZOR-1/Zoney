@@ -100,19 +100,19 @@ const ChatSidebar = () => {
               <div>
                 <h3 className='text-ellipsis dark:text-slate-100 font-semibold text-base line-clamp-1'>{isGroup ? conv.name : (conv?.userDetails?.firstname + " " + conv?.userDetails?.lastname).toUpperCase()}</h3>
                 <div>
-                  {conv?.lastMsg.image && (
+                  {conv?.lastMsg?.image && (
                       <div className='flex gap-1 text-slate-500 items-center'>
                         <span className='text-sm'><FaImage /></span>
                         {!conv?.lastMsg.text && <span className='text-sm'>Image</span>}
                       </div>
                   )}
-                  {conv?.lastMsg.video && (
+                  {conv?.lastMsg?.video && (
                       <div className='flex gap-1 text-slate-500 items-center'>
                         <span className='text-sm'><FaVideo /></span>
                         {!conv?.lastMsg.text && <span className='text-sm'>Video</span>}
                       </div>
                   )}
-                  {conv?.lastMsg.audio && (
+                  {conv?.lastMsg?.audio && (
                       <div className='flex gap-1 text-slate-500 items-center'>
                         <span className='text-sm'><FaMicrophone /></span>
                         {!conv?.lastMsg.text && <span className='text-sm'>Audio</span>}
@@ -122,7 +122,7 @@ const ChatSidebar = () => {
                 </div>
               </div>
               <div className='ml-auto flex flex-col justify-between gap-1 items-center'>
-                <p className='dark:text-slate-200 text-xs mt-auto'>{calculateTime(conv?.lastMsg?.createdAt)}</p>
+                <p className={`${!conv?.lastMsg?.createdAt? 'hidden': 'block'} dark:text-slate-200 text-xs mt-auto`}>{calculateTime(conv?.lastMsg?.createdAt)}</p>
                 {Boolean(conv?.unseenMsg) && (
                   <p className='text-xs w-4 flex justify-center items-center h-4 ml-auto p-1 bg-green-500 text-white rounded-full font-semibold'>{conv.unseenMsg}</p>
                 )}

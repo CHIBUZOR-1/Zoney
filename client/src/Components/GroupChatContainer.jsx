@@ -8,7 +8,6 @@ import Avatarz from './Avatar';
 import { IoIosArrowBack, IoMdAdd, IoMdSend, IoMdVideocam } from 'react-icons/io';
 import { calculateTime, formatNumber } from '../Client-Utils/CalculateTime';
 import { MdModeEdit, MdOutlineClose } from 'react-icons/md';
-import VoiceRecorder from './VoiceRecorder';
 import { BsFillMicFill } from 'react-icons/bs';
 import { FaRegFaceSmile } from 'react-icons/fa6';
 import { LiaImageSolid } from 'react-icons/lia';
@@ -16,6 +15,7 @@ import EmojiPicker from 'emoji-picker-react';
 import { Modal } from 'antd';
 import { useTheme } from '../Context/ThemeContext';
 import GroupVoiceMessage from './GroupVoiceMessage';
+import AudioRecorder from './AudioRecorder';
 
 const GroupChatContainer = () => {
     const { socket } = useAuth(); 
@@ -154,8 +154,7 @@ const GroupChatContainer = () => {
     const handleEmojiClick = (emojiObj) => { 
         setMessages(prev => ({ ...prev, text: prev.text + emojiObj.emoji })); 
     };
-    const handleSendz = async (e) => {
-        e.preventDefault(); 
+    const sendMessagez = async (e) => {
         let imageUrl = "", 
         videoUrl = "", 
         voiceUrl = ""; 
@@ -187,6 +186,11 @@ const GroupChatContainer = () => {
             } 
         }
     }
+    const handleSendz = async (e) => {
+      e.preventDefault();
+      setShowRecording(false);
+      await sendMessagez();
+    };
     const showMod = () => {
       setMod(true);
     };
@@ -396,7 +400,7 @@ const GroupChatContainer = () => {
                     </div>
                   </div>
                 ) : (
-                  <VoiceRecorder hide={setShowRecording} onSend={handleSendz} onStopRecording={handleStopRecordingz}/>
+                  <AudioRecorder hide={()=>{setShowRecording(false); setMessages(prev => ({ ...prev, voiceClip: "" }))}} onSend={sendMessagez} onStopRecording={handleStopRecordingz}/>
                 )
               }
             

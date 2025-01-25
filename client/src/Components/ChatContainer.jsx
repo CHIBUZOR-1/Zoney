@@ -13,11 +13,11 @@ import { IoMdSend } from "react-icons/io";
 import { BsFillMicFill } from "react-icons/bs";
 import { MdOutlineClose } from "react-icons/md";
 import EmojiPicker from 'emoji-picker-react';
-import VoiceRecorder from './VoiceRecorder';
 import axios from 'axios';
 import VoiceMessage from './VoiceMessage';
 import { calculateTime } from '../Client-Utils/CalculateTime';
 import { useTheme } from '../Context/ThemeContext';
+import AudioRecorder from './AudioRecorder';
 
 
 
@@ -123,8 +123,7 @@ const ChatContainer = () => {
   const handleEmojiClick = (emojiObj) => { 
     setMessages(prev => ({ ...prev, text: prev.text + emojiObj.emoji })); 
   };
-  const handleSend = async(e)=> {
-    e.preventDefault();
+  const sendMessage = async()=> {
     let imageUrl = "", videoUrl = "", voiceUrl = ""; 
     if (messages.image) { 
       imageUrl = await handleFileUpload(messages.image, 'image'); 
@@ -155,6 +154,12 @@ const ChatContainer = () => {
       }
     }
   }
+  console.log(messages)
+  const handleSend = async (e) => {
+    e.preventDefault();
+    setShowRecording(false);
+    await sendMessage();
+  };
   
 
   const handleStopRecording = useCallback((audioBlob) => { 
@@ -302,7 +307,7 @@ const ChatContainer = () => {
               </div>
             </div>
           ) : (
-            <VoiceRecorder hide={setShowRecording} onSend={handleSend} onStopRecording={handleStopRecording}/>
+            <AudioRecorder hide={()=>{setShowRecording(false); setMessages(prev => ({ ...prev, voiceClip: "" }))}} onSend={sendMessage} onStopRecording={handleStopRecording}/>
           )
         }
        
