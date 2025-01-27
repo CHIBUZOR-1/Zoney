@@ -13,6 +13,7 @@ const notificationModel = require('../Models/NotificationModel');
 const getGroupDialoguez = require('../Utils/GetGroupDialoguez');
 const groupModel = require('../Models/GroupModel');
 const groupMessageModel = require('../Models/groupMessageModel');
+const cloudinary = require('cloudinary').v2;
 
 // Socket connection
 dotenv.config();
@@ -26,40 +27,37 @@ const io = new Server(server, {
     }
 });
 
-// Multer Configuration
-const storage = multer.diskStorage({ 
-  destination: (req, file, cb) => { 
-    if (file.mimetype.startsWith('image/')) { 
-        cb(null, 'uploads/images/'); 
-    } else if (file.mimetype.startsWith('video/')) { 
-        cb(null, 'uploads/videos/'); 
-    } else if (file.mimetype.startsWith('audio/')) { 
-        cb(null, 'uploads/others/'); 
-    } else { 
-        cb(null, 'uploads/voice/'); 
-    } 
-  }, 
-  filename: (req, file, cb) => { 
-    //cb(null, `${file.originalname}`); 
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9); 
-    const extension = file.originalname.split('.').pop(); // Get the file extension 
-    const originalExtension = file.mimetype.split('/')[1];
-    cb(null, `${file.fieldname}-${uniqueSuffix}.${originalExtension}`);
-  } 
-}); 
-
+const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
 // Endpoint to handle file uploads 
-app.post('/upload', upload.single('file'), (req, res) => { 
+// Updated Endpoint to handle file uploads to Cloudinary
+app.post('/upload', upload.single('file'), async (req, res) => { 
   if (!req.file) { 
-      return res.status(400).send('No file uploaded'); 
+    return res.status(400).send('No file uploaded'); 
   } 
-  res.send({ filePath: `${req.file.destination}${req.file.filename}` }); 
+
+  try {
+    const fileBuffer = req.file.buffer;
+    const fileType = req.file.mimetype.startsWith('image/') ? 'image' : 
+                    req.file.mimetype.startsWith('video/') ? 'video' : 'auto';
+
+    const result = await new Promise((resolve, reject) => {
+      cloudinary.uploader.upload_stream({
+        resource_type: fileType,
+        upload_preset: 'Zoneyz',
+      }, (error, result) => {
+        if (error) return reject(error);
+        resolve(result);
+      }).end(fileBuffer);
+    });
+
+    res.send({ filePath: result.secure_url });
+  } catch (error) {
+    console.error('Error uploading file to Cloudinary:', error);
+    res.status(500).send('Upload to Cloudinary failed');
+  }
 });
-
-
-
 const onlineUser = new Set();
 
 io.on("connection", async (socket) => {

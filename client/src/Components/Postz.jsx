@@ -105,7 +105,7 @@ const Postz = ({onUpdatePostz, path, onClick, onDelete, post}) => {
         {
           post?.image && (
             <div onClick={onClick} className='w-full ratte h-full flex items-center justify-center overflow-hidden cursor-pointer relative '>
-              <img  src={`/${post?.image}`} className='w-full h-full  absolute inset-0 object-cover' alt="" />
+              <img  src={post?.image} className='w-full h-full  absolute inset-0 object-cover sm:object-fill' alt="" />
               
             </div>
           )

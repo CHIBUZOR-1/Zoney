@@ -51,7 +51,7 @@ const GroupVoiceMessage = ({ message }) => {
     }, []);
 
     useEffect(()=>{
-        const audioUrl = `/${message?.audio}`
+        const audioUrl = message?.audio;
         const audio = new Audio(audioUrl)
         setAudio(audio)
         waveForm.current.load(audioUrl)

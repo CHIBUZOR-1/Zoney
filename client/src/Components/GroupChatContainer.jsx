@@ -118,7 +118,7 @@ const GroupChatContainer = () => {
     const clearVid = () => { 
         setMessages(prev => ({ ...prev, video: "" })); 
     }; 
-    const handleFileUpload = async (file, type) => { 
+    const handleFileUpload = async (file) => { 
         const formData = new FormData(); 
         formData.append('file', file); 
         try { 
@@ -159,13 +159,13 @@ const GroupChatContainer = () => {
         videoUrl = "", 
         voiceUrl = ""; 
         if (messages.image) { 
-            imageUrl = await handleFileUpload(messages.image, 'image'); 
+            imageUrl = await handleFileUpload(messages.image); 
         } 
         if (messages.video) { 
-            videoUrl = await handleFileUpload(messages.video, 'video'); 
+            videoUrl = await handleFileUpload(messages.video); 
         }
         if (messages.voiceClip) { 
-            voiceUrl = await handleFileUpload(messages.voiceClip, 'voiceClip'); 
+            voiceUrl = await handleFileUpload(messages.voiceClip); 
         } 
         if (messages.text || imageUrl || videoUrl || voiceUrl) { 
             if (socket) { 

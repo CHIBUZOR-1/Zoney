@@ -8,7 +8,6 @@ const path = require('path');
 const createPost = async(req, res, io) => {
     try {
         const {text, image, video} = req.body;
-
         const newPost = new postModel({
             user: req.user.userId,
             text,

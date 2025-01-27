@@ -7,6 +7,7 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const path = require("path");
 const crypto = require('crypto');
+const cloudinary = require('cloudinary').v2;
 const {app, server, io} = require('./Socket/index');
 require('../SERVER/Utils/CronJob');
 
@@ -19,6 +20,11 @@ const notificationRouter = require('./Routes/NotificationRoutes');
 const createStoryRouter = require('./Routes/StoryRoutes');
 
 dotenv.config();
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 
 app.use(cors({
@@ -47,11 +53,11 @@ app.use((req, res, next) => {
                 defaultSrc: ["'self'"],
                 scriptSrc: ["'self'", `'nonce-${res.locals.nonce}'`, "https://www.gstatic.com", "https://www.googleapis.com", "https://apis.google.com", "https://your-emoji-picker-cdn.com"],
                 styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://your-emoji-picker-cdn.com"],
-                imgSrc: ["'self'", "data:", "https://www.gstatic.com", "blob:", "https://as2.ftcdn.net"],
+                imgSrc: ["'self'", "data:", "https://www.gstatic.com", "blob:", "https://as2.ftcdn.net", "https://res.cloudinary.com"],
                 connectSrc: ["'self'", "https://www.googleapis.com", "https://firebasestorage.googleapis.com", "https://identitytoolkit.googleapis.com", "blob:", "https://your-emoji-picker-cdn.com"],
                 fontSrc: ["'self'", "https://fonts.gstatic.com"],
                 objectSrc: ["'none'"],
-                mediaSrc: ["'self'", "blob:"],
+                mediaSrc: ["'self'", "blob:", "https://res.cloudinary.com"],
                 frameSrc: ["'self'", "https://mern-zoney.firebaseapp.com", "https://accounts.google.com"],
                 baseUri: ["'self'"],
                 formAction: ["'self'"],

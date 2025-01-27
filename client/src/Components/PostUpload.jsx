@@ -25,8 +25,8 @@ const PostUpload = () => {
     const emojiRef = useRef(null);
     const [post, setPost] = useState({
         text: "",
-        image: null,
-        video: null
+        image: "",
+        video: ""
 
     });
     const switchUpload = () => {
@@ -59,10 +59,23 @@ const PostUpload = () => {
             };
     }, [emojiRef]);
 
+    /*const formData = new FormData();
+    formData.append('text', post.text);
+    if (post.image) formData.append('image', post.image);
+    if (post.video) formData.append('video', post.video);
+
+    try {
+        const { data } = await axios.post('/api/posts/create', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });*/
+
     const handleEmojiClick = (emojiObj) => { 
         setPost(prev => ({ ...prev, text: prev.text + emojiObj.emoji })); 
       };
-    const handleFileUpload = async (file) => { 
+      console.log(post.image)
+      const handleFileUpload = async (file) => { 
         const formData = new FormData(); 
         formData.append('file', file); 
         try { 
@@ -73,33 +86,33 @@ const PostUpload = () => {
             return null; 
         } 
     };
-
-
-    const handleSubmit = async (e) => { 
+      const handleSubmit = async (e) => {
         e.preventDefault(); 
         let imageUrl = null; 
         let videoUrl = null;
         if (post.image) { imageUrl = await handleFileUpload(post.image); }
         if (post.video) { videoUrl = await handleFileUpload(post.video); }
+        console.log(imageUrl)
         const newPost = { text: post.text, image: imageUrl, video: videoUrl };
 
         try {
-            const response = await axios.post('/api/posts/create', newPost);
-            if (response.data.success) { 
+            const { data } = await axios.post('/api/posts/create', newPost);
+            if (data.success) { 
                 setIsModalOpen(false); 
                 setPost({ text: "", image: null, video: null }); 
                 if (socket) { 
-                    const { post } = response.data; 
+                    const { post } = data; 
                     socket.emit('newPost', { 
-                        from: user.userId, 
+                        from: user.user?.id, 
                         to: post.user._id, 
                         postId: post._id }); 
-                    }
-            }
+                }
+            } // Close the modal and reset the post state
         } catch (error) {
             console.error('Error creating post:', error);
         }
-    }
+    };
+
 
 
     const uploadFile = (e) => {
