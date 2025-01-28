@@ -164,7 +164,7 @@ const PostUpload = () => {
                     <textarea className='w-full dark:bg-slate-600 max-sm:text-sm dark:text-slate-100 p-1 text-[16px] rounded-md' onChange={({target}) => setPost(m => ({ ...m, text: target.value }))} value={post.text} placeholder={`What's on your mind, ${user?.firstname + " " + user?.lastname}?`}   rows="2" cols="16"></textarea>
                     <FaRegFaceSmile className='w-7 h-7 cursor-pointer text-green-700 dark:text-green-300' onClick={() => setShowEmojiPicker(val => !val)} />
                         {showEmojiPicker && (
-                            <div ref={emojiRef} className={`absolute max-md:bottom-12 md:left-0 md:bottom-10`}> 
+                            <div ref={emojiRef} className={`absolute z-30 max-md:bottom-12 md:left-0 md:bottom-10`}> 
                                 <EmojiPicker skinTonesDisabled={false}  searchDisabled={true} theme='dark' height={300} width="90%"  onEmojiClick={handleEmojiClick} /> 
                             </div>
                             )
@@ -175,13 +175,13 @@ const PostUpload = () => {
                         <div className='w-full relative cursor-pointer hover:bg-slate-200 flex flex-col justify-center items-center h-full rounded border'>
                             { post?.image ? ( 
                                         <> 
-                                            <img src={URL.createObjectURL(post?.image)} className='h-full w-full aspect-square object-scale-down max-w-sm m-2' alt="" /> 
+                                            <img src={URL.createObjectURL(post?.image)} className='h-full w-full  object-scale-down' alt="" /> 
                                             <button className='absolute top-1 border-1px rounded-full p-2 border-red-500 font-semibold flex items-center justify-center w-10 h-10 right-1' onClick={clearFile}>x</button> 
                                         </> 
                                     ) : ( 
                                             post?.video ? ( 
                                                 <div className="relative h-full w-full"> 
-                                                    <video controls muted src={URL.createObjectURL(post?.video)} className='h-full w-full object-scale-down max-w-sm m-2'></video> 
+                                                    <video controls muted src={URL.createObjectURL(post?.video)} className='h-full w-full object-scale-down'></video> 
                                                     <button className='absolute top-1 border-1px rounded-full p-2 border-red-500 font-semibold flex items-center justify-center w-10 h-10 right-1' onClick={clearFile}>x</button> 
                                                 </div> 
                                             ) : ( 

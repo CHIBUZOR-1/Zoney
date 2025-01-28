@@ -1,10 +1,11 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
-import { toast } from 'react-toastify';
 import MutualFriendsCount from './MutualFriendsCount';
 import Avatarz from './Avatar';
+import { useNavigate } from 'react-router-dom';
 
 const Suggestions = () => {
+    const navigate = useNavigate()
     const [users, setUsers] = useState([]);
     useEffect(()=> {
         fetchUsers();
@@ -16,13 +17,6 @@ const Suggestions = () => {
         }
     };
     
-    const sendRequest = async(id)=> {
-      const {data}= await axios.post('/api/requests/send-request', { recipientId: id });
-      if(data.success) {
-        toast.success("Friend request sent")
-      }
-    }
-    console.log(users)
   return (
     <div className='h-full overflow-y-auto scrollbar pt-14 pb-2 max-sm:pb-1 w-full'>
       <div className='w-full p-1 pl-1'>
@@ -52,7 +46,7 @@ const Suggestions = () => {
                       <MutualFriendsCount userId2={u?._id}/>
                     </div>
                     <div className='w-full items-center flex justify-center'>
-                      <button onClick={()=> sendRequest(u?._id)} className='w-[60%] max-sm:text-xs text-slate-100 font-semibold max-md:text-sm bg-green-500 p-1 rounded-md'>Add Friend</button>
+                      <button onClick={()=> navigate(`/profile/${u?._id}`)} className='w-[60%] max-sm:text-xs text-slate-100 font-semibold max-md:text-sm bg-green-500 p-1 rounded-md'>View</button>
                     </div>
                   </div>
                 )

@@ -14,8 +14,7 @@ import Avatarz from './Avatar';
 const FullViewPost = ({pst, close, onUpdate}) => {
     const { socket } = useAuth();
     const user = useSelector(state => state?.user?.user)
-    const [newText, setText] = useState('')
-    //const { id } = useParams();
+    const [newText, setText] = useState('');
     const emojiRef = useRef(null)
     const [selectPost, setSelectPost] = useState(null);
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -58,13 +57,10 @@ const FullViewPost = ({pst, close, onUpdate}) => {
     const handleCloseModal = () => { 
         setSelectPost(null); 
     };
-      const commentPost = async(e)=> {
-        e.preventdefault();
+    const commentPost = async()=> {
         try {
           const {data} = await axios.post(`/api/posts/comment/${pst._id}`, {newText});
-          onUpdate(data.post)
-          //setPst(data.post);
-          console.log(data.post)
+          onUpdate(data.populatedPost);
           setText('')
           if (socket && pst.user?._id !== user.id) { 
             socket.emit('commentz', { 
@@ -157,7 +153,7 @@ const FullViewPost = ({pst, close, onUpdate}) => {
                         <hr />
                         <div className="flex h-full p-1 flex-col w-full">
                             
-                            <div className="flex-grow h-full justify-between p-1 overflow-y-auto gap-2">
+                            <div className="flex-grow h-full justify-between p-1 overflow-y-auto space-y-2">
                                 {
                                     pst?.comments?.length === 0 && (
                                         <div className='w-full flex justify-center items-center'>
@@ -185,7 +181,7 @@ const FullViewPost = ({pst, close, onUpdate}) => {
                                 <Avatarz image={user?.profilePic} height={35} width={35}/>
                                 <div className='flex gap-1 w-full relative bg-slate-300 dark:bg-slate-500 p-1 rounded-md'>
                                     <div className='flex w-full gap-1'>
-                                      <input type="text" className='dark:bg-slate-500 w-full bg-slate-300 outline-none' value={newText} name='newText' onChange={(e)=> setText(e.target.value)} placeholder='Write comment...' /> 
+                                      <input type="text" className='dark:bg-slate-500 w-full dark:text-slate-100 bg-slate-300 outline-none' value={newText} name='newText' onChange={(e)=> setText(e.target.value)} placeholder='Write comment...' /> 
                                       <FaRegFaceSmile className='w-5 h-5 cursor-pointer text-green-700 dark:text-green-300' onClick={() => setShowEmojiPicker(val => !val)} />
                                             {showEmojiPicker && (
                                                 <div ref={emojiRef} className={`absolute max-md:bottom-12 md:left-0 md:bottom-10`}> 

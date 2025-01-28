@@ -79,10 +79,7 @@ const commentOnPost = async(req, res)=> {
     try {
         const { newText } = req.body;
         
-        const post = await postModel.findById(req.params.id).populate({
-            path: 'comments.user',
-            select: '-password'
-        }); // Fetch the post by ID 
+        const post = await postModel.findById(req.params.id) // Fetch the post by ID 
         if (!post) { 
             return res.status(404).json({ error: true, message: "Post not found" }); 
         }
@@ -90,7 +87,11 @@ const commentOnPost = async(req, res)=> {
         const comment = {user: req.user.userId, text: newText};
         post.comments.push(comment);
         await post.save();
-        res.status(200).json({ success: true, post})
+        const populatedPost = await postModel.findById(req.params.id).populate({
+            path: 'comments.user',
+            select: '-password'
+        });
+        res.status(200).json({ success: true, populatedPost})
     } catch (error) {
         console.log(error)
         res.status(500).json({

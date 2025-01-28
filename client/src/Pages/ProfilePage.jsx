@@ -40,6 +40,8 @@ const ProfilePage = () => {
   const [incomingRequestDrp, setIncomingRequestDrp] = useState(false);
   const [detailzLoad, setDetailzLoad] = useState(false);
   const [selectImg, setSelectImg] = useState(null);
+  const [photoLoad, setPhotoLoad]= useState(false);
+  const [coverLoad, setCoverLoad]= useState(false);
   const [aboutz, updateAboutz]= useState({
     bio: '',
     city: '',
@@ -360,6 +362,7 @@ const handleFileUpload2 = async(file)=> {
 
 const submitPhoto = async(e)=> {
   e.preventDefault(); 
+  setPhotoLoad(true)
   let imageUrl = null;
 
   if(img) { 
@@ -375,6 +378,7 @@ const submitPhoto = async(e)=> {
         setDetails({ ...detailz, profileImg: imageUrl });
         dispatch(updateProfilePic(imageUrl));
         setImg(null)
+        setPhotoLoad(false)
       }
     } catch (error) {
       console.log(error)
@@ -388,6 +392,7 @@ const submitPhoto = async(e)=> {
 
 const coverImageUpload = async(e)=> {
   e.preventDefault();
+  setCoverLoad(true)
   let CoverImgUrl = null;
 
   if(coverImgz) { 
@@ -402,6 +407,7 @@ const coverImageUpload = async(e)=> {
         setDetails({ ...detailz, coverImg: CoverImgUrl });
         dispatch(updateCoverPhoto(CoverImgUrl));
         setCoverImg(null);
+        setCoverLoad(false)
       }
     } catch (error) {
       console.log(error)
@@ -634,7 +640,7 @@ const friendsCount = detailz?.friends ? detailz.friends.length : 0;
               <input onChange={uploadCoverImg} ref={coverImgRef} hidden accept='image/*' type="file" />
             </div>
             <div className='w-full flex items-center justify-center'>
-              <button onClick={coverImageUpload} className=' font-semibold p-2 w-[70%] bg-green-500 rounded-md dark:text-slate-200'>Submit</button>
+              <button onClick={coverImageUpload} className={` ${coverLoad && 'animate-pulse'} font-semibold p-2 w-[70%] bg-green-500 rounded-md dark:text-slate-200`}>{coverLoad? "saving..." :'Submit'}</button>
             </div>
           </div>
         </Modal>
@@ -689,7 +695,7 @@ const friendsCount = detailz?.friends ? detailz.friends.length : 0;
               <input onChange={uploadImg} ref={profileImgRef} hidden accept='image/*' type="file" />
             </div>
             <div className='w-full flex items-center justify-center px-5'>
-              <button onClick={submitPhoto} className='p-2 border bg-green-700 text-slate-200 font-semibold w-full rounded-md active:bg-green-500'>Save</button>
+              <button onClick={submitPhoto} className={`${photoLoad && 'animate-pulse'} p-2 border bg-green-700 text-slate-200 font-semibold w-full rounded-md active:bg-green-500`}>{photoLoad ? "saving...":'Save'}</button>
             </div>
             
           </div>
