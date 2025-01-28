@@ -53,7 +53,7 @@ const GroupVoiceMessage = ({ message }) => {
     useEffect(()=>{
         const audioUrl = message?.audio;
         const audio = new Audio(audioUrl)
-        setAudio(audio)
+        setAudio(audio);
         waveForm.current.load(audioUrl)
         waveForm.current.on("ready", ()=> {
             setTotalDuration(waveForm.current.getDuration());

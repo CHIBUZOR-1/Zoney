@@ -26,8 +26,7 @@ const PostUpload = () => {
     const [post, setPost] = useState({
         text: "",
         image: "",
-        video: ""
-
+        video: "",
     });
     const switchUpload = () => {
         setOpenUpload(prev => !prev)
@@ -59,17 +58,6 @@ const PostUpload = () => {
             };
     }, [emojiRef]);
 
-    /*const formData = new FormData();
-    formData.append('text', post.text);
-    if (post.image) formData.append('image', post.image);
-    if (post.video) formData.append('video', post.video);
-
-    try {
-        const { data } = await axios.post('/api/posts/create', formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            },
-        });*/
 
     const handleEmojiClick = (emojiObj) => { 
         setPost(prev => ({ ...prev, text: prev.text + emojiObj.emoji })); 
@@ -80,7 +68,7 @@ const PostUpload = () => {
         formData.append('file', file); 
         try { 
             const response = await axios.post('/api/posts/upload-post-file', formData); 
-            return response.data.filePath; 
+            return response.data; 
         } catch (error) { 
             console.error('Error uploading file:', error); 
             return null; 
@@ -90,10 +78,19 @@ const PostUpload = () => {
         e.preventDefault(); 
         let imageUrl = null; 
         let videoUrl = null;
-        if (post.image) { imageUrl = await handleFileUpload(post.image); }
-        if (post.video) { videoUrl = await handleFileUpload(post.video); }
+        let postPublicId = null;
+        if (post.image) { 
+            const result = await handleFileUpload(post.image);
+            imageUrl = result.filePath;
+            postPublicId = result.publicId
+        }
+        if (post.video) { 
+            const result = await handleFileUpload(post.video);
+            videoUrl = result.filePath;
+            postPublicId = result.publicId;
+        }
         console.log(imageUrl)
-        const newPost = { text: post.text, image: imageUrl, video: videoUrl };
+        const newPost = { text: post.text, image: imageUrl, video: videoUrl, postPublicId };
 
         try {
             const { data } = await axios.post('/api/posts/create', newPost);
@@ -184,7 +181,7 @@ const PostUpload = () => {
                                     ) : ( 
                                             post?.video ? ( 
                                                 <div className="relative h-full w-full"> 
-                                                    <video controls muted src={URL.createObjectURL(post?.video)} className='h-full w-full aspect-square object-fit max-w-sm m-2'></video> 
+                                                    <video controls muted src={URL.createObjectURL(post?.video)} className='h-full w-full object-scale-down max-w-sm m-2'></video> 
                                                     <button className='absolute top-1 border-1px rounded-full p-2 border-red-500 font-semibold flex items-center justify-center w-10 h-10 right-1' onClick={clearFile}>x</button> 
                                                 </div> 
                                             ) : ( 

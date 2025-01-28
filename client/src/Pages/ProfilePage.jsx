@@ -11,7 +11,7 @@ import UserDetails from '../Components/UserDetails';
 import axios from 'axios';
 import Postz from '../Components/Postz';
 import Photos from '../Components/Photos';
-import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { HiUserAdd } from "react-icons/hi";
 import AboutProfileView from '../Components/AboutProfileView';
@@ -39,6 +39,7 @@ const ProfilePage = () => {
   const [relationshipStatus, setRelationshipStatus] = useState('');
   const [incomingRequestDrp, setIncomingRequestDrp] = useState(false);
   const [detailzLoad, setDetailzLoad] = useState(false);
+  const [selectImg, setSelectImg] = useState(null);
   const [aboutz, updateAboutz]= useState({
     bio: '',
     city: '',
@@ -77,6 +78,7 @@ const ProfilePage = () => {
     getMyPosts()
     getDetails()
     fetchRequests()
+     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params.id]);
   useEffect(() => {
       if (selectedPost1 === null) {
@@ -147,6 +149,13 @@ const ProfilePage = () => {
     window.history.back();
     //history.replaceState({}, '', prevUrl); 
   };
+  const handleImgClick = (pic) => { 
+    setSelectImg(pic); 
+  };
+  const handleClosePicModal = () => { 
+    setSelectImg(null); 
+};
+
 
   const profileId = params.id;
 
@@ -164,7 +173,7 @@ const ProfilePage = () => {
       setRelationshipStatus('self'); 
     }
     
-}, [params?.id, user?.id]);
+}, [params?.id, user?.id, profileId]);
 
 const updateAbout = async()=> {
   setAbtLoader(true)
@@ -326,13 +335,22 @@ const clearCoverImg = ()=> {
 }
 
 
-
-
 const handleFileUpload = async(file)=> {
   const formData = new FormData();
   formData.append('file', file);
   try {
       const { data }= await axios.post('/api/users/uploadProfilePhoto', formData);
+      return data.filePath;
+  } catch (error) {
+      console.error('Error uploading file:', error); 
+      return null;
+  }
+};
+const handleFileUpload2 = async(file)=> {
+  const formData = new FormData();
+  formData.append('file', file);
+  try {
+      const { data }= await axios.post('/api/users/uploadCoverPhoto', formData);
       return data.filePath;
   } catch (error) {
       console.error('Error uploading file:', error); 
@@ -373,7 +391,7 @@ const coverImageUpload = async(e)=> {
   let CoverImgUrl = null;
 
   if(coverImgz) { 
-    CoverImgUrl = await handleFileUpload(coverImgz); 
+    CoverImgUrl = await handleFileUpload2(coverImgz); 
   }
   if(CoverImgUrl) {
     const newCoverPhoto = { image: CoverImgUrl };
@@ -494,8 +512,8 @@ const friendsCount = detailz?.friends ? detailz.friends.length : 0;
   return (
     <Layout>
       <div className='relative min-h-[100vh] overflow-y-auto dark:bg-facebookDark-200 mt-14'>
-        <div className='relative h-52 bg-slate-300 overflow-hidden'>
-          <img src={`/${detailz?.coverImg}` || ''} alt="" className='w-full cursor-pointer absolute inset-0 h-full object-cover' />
+        <div onClick={() => handleImgClick(detailz?.coverImg)} className='relative h-52 bg-slate-300 overflow-hidden'>
+          <img src={detailz?.coverImg || ''} alt="" className='w-full cursor-pointer absolute inset-0 h-full object-cover' />
           <button  onClick={showModal} className={`right-4 ${params.id === user?.id ? "block": "hidden"} active:bg-blue-300 z-30 bottom-4 absolute flex gap-2 items-center p-1 rounded font-medium cursor-pointer text-sm bg-slate-50`}>
             <FaCamera />
             <p className='hidden sm:block'>Edit Cover image</p>
@@ -503,9 +521,9 @@ const friendsCount = detailz?.friends ? detailz.friends.length : 0;
         </div>
         <div className='z-10 mx-auto px-4 -mt-14 relative'>
           <div className='flex flex-col items-center md:items-end gap-3 md:flex-row'>
-            <div className='border-[3px] relative border-green-400 w-fit rounded-full'>
+            <div onClick={() => handleImgClick(detailz?.profileImg)} className='border-[3px] relative border-green-400 w-fit rounded-full'>
               <Avatarz height={95} image={detailz?.profileImg}  width={95} name={(detailz?.firstname + " " + detailz?.lastname).toUpperCase()} />
-              <div onClick={showModal2} className={`absolute ${params.id === user?.id ? "block": "hidden"} cursor-pointer rounded-full w-8 h-8 bottom-1 p-2 bg-slate-200 flex items-center justify-center -right-2 shadow`}><FaCamera /></div>
+              <div onClick={(e) => {e.stopPropagation(); showModal2(); }} className={`absolute ${params.id === user?.id ? "block": "hidden"} cursor-pointer rounded-full w-8 h-8 bottom-1 p-2 bg-slate-200 flex items-center justify-center -right-2 shadow`}><FaCamera /></div>
             </div>
             {
               detailzLoad ? 
@@ -692,6 +710,11 @@ const friendsCount = detailz?.friends ? detailz.friends.length : 0;
               <button onClick={updateAbout} className={`${abtLoader? "animate-pulse": "animate-none"} w-[70%] font-semibold active:bg-green-800 p-1 rounded-md cursor-pointer bg-green-600 text-slate-50`}>{abtLoader? 'please wait...' : 'update'}</button>
             </div>
           </div>
+        </Modal>
+        <Modal  className='custom-modal' open={selectImg !== null} onCancel={handleClosePicModal} footer={null}>
+              {selectImg && (
+                  <img src={selectImg} alt='' className="w-full h-auto" />
+              )}
         </Modal>
       </div>
     </Layout>

@@ -3,15 +3,17 @@ const postModel = require('../Models/PostModel');
 const userModel = require('../Models/UserModel');
 const fs = require('fs');
 const path = require('path');
+const cloudinary = require('cloudinary').v2;
 
 
 const createPost = async(req, res, io) => {
     try {
-        const {text, image, video} = req.body;
+        const {text, image, video, postPublicId} = req.body;
         const newPost = new postModel({
             user: req.user.userId,
             text,
             image,
+            postPublicId,
             video
         })
         await newPost.save();
@@ -132,46 +134,10 @@ const deletePost = async(req, res) => {
             });
         }
 
-        if (post.image) { 
-            const imagePath = path.join(__dirname, '..', '..', post.image);
-            console.log('Deleting image at:', imagePath);
-            if (fs.existsSync(imagePath)) {
-                fs.unlink(imagePath, (err) => { 
-                    if (err) { 
-                        console.error('Error deleting image file:', err); 
-                    } 
-                });  
-            } else { console.log('Image file does not exist:', imagePath); }
+        const resourceType = post.image ? 'image' : post.video ? 'video' : null;
+        if (post.postPublicId) {
+            await cloudinary.uploader.destroy(post.postPublicId, { resource_type: resourceType });
         }
-        if (post.video) { 
-            const videoPath = path.join(__dirname, '..', '..', post.video);
-            console.log('Deleting video at:', videoPath);
-            if (fs.existsSync(videoPath)) {
-                fs.unlink(videoPath, (err) => { 
-                    if (err) { 
-                        console.error('Error deleting video file:', err); 
-                    } 
-                }); 
-            } else { console.log('Video file does not exist:', videoPath); }
-            
-        }
-        /*if (post.image) { 
-            const imagePath = path.join(__dirname, '../uploads/images/', post.image); 
-            fs.unlink(imagePath, (err) => { 
-                if (err) { 
-                    console.error('Error deleting image file:', err); 
-                } 
-            });
-        }
-
-        if (post.video) { 
-            const videoPath = path.join(__dirname, '../uploads/videos/', post.video); 
-            fs.unlink(videoPath, (err) => { 
-                if (err) { 
-                    console.error('Error deleting video file:', err); 
-                } 
-            }); 
-        }*/
         await postModel.findByIdAndDelete(req.params.id);
         res.status(200).json({ success: true, message: 'Post deleted successfully' });
     } catch (error) {

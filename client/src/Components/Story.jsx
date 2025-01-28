@@ -1,11 +1,12 @@
 import React from 'react'
 import Avatarz from './Avatar'
 
-const Story = ({stry}) => {
+const Story = ({stry, show}) => {
+  
   return (
-    <div className=' flex-none flex-col justify-between shadow rounded-md h-44 w-32 relative'>
-      <div className='w-full rounded-md h-full'>
-        <img src={`/${stry.media}`} className='rounded-md w-full h-full' alt="" />
+    <div className=' flex-none flex-col cursor-pointer justify-between shadow rounded-md h-44 w-32 relative'>
+      <div onClick={()=> show(stry)} className='w-full rounded-md h-full'>
+        <img src={stry.media} className='rounded-md object-fill inset-0 w-full h-full' alt="" />
       </div>
       <div className='absolute border border-2px border-green-500 rounded-full top-1 left-2 flex items-center justify-center '>
         <Avatarz height={40} width={40} image={stry?.user?.profileImg} name={(stry?.user?.firstname + " " + stry?.user?.lastname).toUpperCase()} />

@@ -131,11 +131,27 @@ const GroupChatContainer = () => {
             return null; 
         }
     }
+    const handleFileUpload1 = async (file) => { 
+      const formData = new FormData(); 
+      formData.append('file', file); 
+      try { 
+          const response = await axios.post('/grp-upload', formData, { 
+              headers: { 'Content-Type': 'multipart/form-data' } 
+          }); 
+          return response.data; 
+      } catch (error) { 
+          console.error('Error uploading file:', error); 
+          return null; 
+      }
+  }
     const submitGroupinfo = async(e) => { 
         e.preventDefault(); 
-        let imageUrlz = null; 
+        let imageUrlz = null;
+        let groupPublicId = null; 
         if(grpImg) { 
-          imageUrlz = await handleFileUpload(grpImg); 
+          const resultz = await handleFileUpload1(grpImg); 
+          imageUrlz = resultz.filePath;
+          groupPublicId = resultz.public_id;
         }
         if(imageUrlz || newGroupName) {
           if(socket) {
@@ -143,7 +159,8 @@ const GroupChatContainer = () => {
               groupId: groupDetails?._id,
               name: newGroupName, 
               imageUrl : imageUrlz !== null? imageUrlz : groupDetails?.image,
-              updatedBy: user?.firstname + " " + user?.lastname
+              updatedBy: user?.firstname + " " + user?.lastname,
+              groupPublicId
             }); 
             setGrpImg(null); 
             setNewGroupName('');

@@ -15,6 +15,9 @@ const postSchema = new mongoose.Schema({
     video: {
         type: String,
     },
+    postPublicId: {
+        type: String,
+    },
     likes:[
         {
             type: mongoose.Schema.Types.ObjectId,

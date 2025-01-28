@@ -115,7 +115,7 @@ const Postz = ({onUpdatePostz, path, onClick, onDelete, post}) => {
         {
           post?.video && (
             <div onClick={onClick} className='w-full cursor-pointer h-[400px] relative'>
-              <video controls src={`/${post?.video}`} className='h-full w-full absolute inset-0 object-cover'/>
+              <video controls  src={post?.video} className='h-full w-full absolute inset-0 object-cover'/>
             </div>
           )
         }

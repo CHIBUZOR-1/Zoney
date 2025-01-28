@@ -32,7 +32,7 @@ const createPostRouter = (io) => {
         }).end(fileBuffer);
       }); 
   
-      res.send({ filePath: result.secure_url });
+      res.send({ filePath: result.secure_url, publicId: result.public_id  });
     } catch (error) {
       console.error('Error uploading file to Cloudinary:', error);
       res.status(500).send('Upload to Cloudinary failed');

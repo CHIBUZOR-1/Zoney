@@ -76,6 +76,7 @@ const FullViewPost = ({pst, close, onUpdate}) => {
           console.error('Error commenting on post:', error); 
         }
       }
+      //const absoluteUrl = url.startsWith('http') ? url : `${process.env.REACT_APP_SERVER_URL}/${url}`;
       const downloadFile = async (url, filename) => {
         if (!url) {
             alert('File URL is missing.');
@@ -83,8 +84,7 @@ const FullViewPost = ({pst, close, onUpdate}) => {
         }
     
         try {
-            const absoluteUrl = url.startsWith('http') ? url : `${process.env.REACT_APP_SERVER_URL}/${url}`;
-            const response = await axios.get(absoluteUrl, {
+            const response = await axios.get(url, {
                 responseType: 'blob',
             });
     
@@ -111,14 +111,14 @@ const FullViewPost = ({pst, close, onUpdate}) => {
                    {
                         pst?.image && (
                             <div className='w-full cursor-pointer relative h-full'>
-                                <img src={`/${pst?.image}`} className='h-full absolute max-sm:object-fill inset-0 w-full object-scale-down' alt="" />
+                                <img src={pst?.image} className='h-full absolute max-sm:object-fill inset-0 w-full object-scale-down' alt="" />
                             </div>
                         )
                     }
                     {
                         pst?.video && (
                             <div className='w-full cursor-pointer h-[400px] relative'>
-                              <video controls src={`/${pst?.video}`} className='h-full w-full absolute inset-0 object-cover'/>
+                              <video controls src={pst?.video} className='h-full w-full absolute inset-0 object-cover'/>
                             </div>
                           )
                     } 
@@ -208,13 +208,10 @@ const FullViewPost = ({pst, close, onUpdate}) => {
         </div>
         <Modal  className='custom-modal' open={selectPost !== null} onCancel={handleCloseModal} footer={null}>
                         {selectPost?.image && (
-                            <img src={`/${selectPost.image}`} alt={selectPost.text} className="w-full h-auto" />
+                            <img src={selectPost.image} alt={selectPost.text} className="w-full h-auto" />
                         )}
                         {selectPost?.video && (
-                            <video controls className="w-full h-auto">
-                                <source src={selectPost.video} type="video/mp4" />
-                                Your browser does not support the video tag.
-                            </video>
+                            <video autoPlay={false} controls className="w-full h-auto" src={selectPost.video} type="video/mp4" />
                         )}
                         <button
                             onClick={() => downloadFile(selectPost?.image || selectPost?.video, selectPost?.text)}

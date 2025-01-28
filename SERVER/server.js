@@ -51,13 +51,13 @@ app.use((req, res, next) => {
         contentSecurityPolicy: {
             directives: {
                 defaultSrc: ["'self'"],
-                scriptSrc: ["'self'", `'nonce-${res.locals.nonce}'`, "https://www.gstatic.com", "https://www.googleapis.com", "https://apis.google.com", "https://your-emoji-picker-cdn.com"],
-                styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://your-emoji-picker-cdn.com"],
-                imgSrc: ["'self'", "data:", "https://www.gstatic.com", "blob:", "https://as2.ftcdn.net", "https://res.cloudinary.com"],
-                connectSrc: ["'self'", "https://www.googleapis.com", "https://firebasestorage.googleapis.com", "https://identitytoolkit.googleapis.com", "blob:", "https://your-emoji-picker-cdn.com"],
+                scriptSrc: ["'self'", `'nonce-${res.locals.nonce}'`, "https://www.gstatic.com", "https://www.googleapis.com", "https://apis.google.com", "https://your-emoji-picker-cdn.com", "https://emoji-picker.com"],
+                styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://your-emoji-picker-cdn.com", "https://emoji-picker.com"],
+                imgSrc: ["'self'", "data:", "https://www.gstatic.com", "blob:", "https://as2.ftcdn.net", "https://res.cloudinary.com", "https://emoji-picker.com"],
+                connectSrc: ["'self'", "https://www.googleapis.com", "https://firebasestorage.googleapis.com", "https://identitytoolkit.googleapis.com", "blob:", "https://res.cloudinary.com", "https://your-emoji-picker-cdn.com", "https://emoji-picker.com"],
                 fontSrc: ["'self'", "https://fonts.gstatic.com"],
                 objectSrc: ["'none'"],
-                mediaSrc: ["'self'", "blob:", "https://res.cloudinary.com"],
+                mediaSrc: ["'self'", "blob:", "https://res.cloudinary.com", "https://emoji-picker.com"],
                 frameSrc: ["'self'", "https://mern-zoney.firebaseapp.com", "https://accounts.google.com"],
                 baseUri: ["'self'"],
                 formAction: ["'self'"],

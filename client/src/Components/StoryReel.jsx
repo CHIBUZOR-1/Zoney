@@ -19,6 +19,13 @@ const StoryReel = () => {
     const [medias, setMedia] = useState(null);
     const [loading, setLoading] = useState(false)
     const [mediaType, setMediaType] = useState('');
+    const [selectImg, setSelectImg] = useState(null);
+      const handleImgClick = (pic) => { 
+        setSelectImg(pic); 
+      };
+      const handleClosePicModal = () => { 
+        setSelectImg(null); 
+    };
     const { socket } = useAuth();
 
 
@@ -53,7 +60,7 @@ const StoryReel = () => {
             const formData = new FormData(); 
             formData.append('file', file); 
             const { data } = await axios.post('/api/storys/upload-story-file', formData); 
-            return data.filePath; 
+            return data; 
         } catch (error) { 
             console.error('Error uploading story file', error); 
             return null; 
@@ -62,12 +69,15 @@ const StoryReel = () => {
 
     const addStory = async (e) => { 
         e.preventDefault();
-        let filePath = null;
+        let filePathz = null;
+        let storyPublicId = null;
         if (medias) {
-           filePath = await uploadStoryFile(medias); 
+           const result = await uploadStoryFile(medias); 
+           filePathz = result.filePath;
+           storyPublicId = result.publicId;
         }
 
-        const newStory = {media: filePath, type: mediaType}
+        const newStory = { media: filePathz, type: mediaType, storyPublicId }
         
         try { 
             const { data } = await axios.post('/api/storys/newStory', newStory); 
@@ -174,7 +184,7 @@ const StoryReel = () => {
             { 
                 !loading && storys.length > 0 &&(
                     storys.map((st, index) => (
-                        <Story key={st?._id} stry={st}/>
+                        <Story show={handleImgClick} key={st?._id} stry={st}/>
                     ))
                 )
             }
@@ -215,6 +225,18 @@ const StoryReel = () => {
                 </div>
                 
             </div>
+        </Modal>
+        <Modal  className='custom-modal' open={selectImg !== null} onCancel={handleClosePicModal} footer={null}>
+            {
+                selectImg?.type === 'image' && (
+                    <img src={selectImg.media}  className="w-full h-auto" alt='' />
+                )
+            }
+            {
+                selectImg?.type === 'video' && (
+                    <video controls className="w-full h-auto" src={selectImg.media}/>
+                )
+            }
         </Modal>
     </div>
   )

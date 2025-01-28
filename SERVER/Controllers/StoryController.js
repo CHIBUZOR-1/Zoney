@@ -1,11 +1,12 @@
 const notificationModel = require('../Models/NotificationModel');
 const storyModel = require('../Models/storyModel');
 const userModel = require('../Models/UserModel');
+const cloudinary = require('cloudinary').v2;
 
 // Add a new story
 const createStory = async (req, res, io) => {
   try {
-    const { media, type } = req.body;
+    const { media, type, storyPublicId } = req.body;
     if (!media || !type) { 
       console.log('Missing media or type'); 
       return res.status(400).json({ 
@@ -16,7 +17,8 @@ const createStory = async (req, res, io) => {
     const newStory = new storyModel({ 
         user: req.user.userId, 
         media,
-        type 
+        type ,
+        storyPublicId
     });
     await newStory.save();
     const user = await userModel.findById(req.user.userId).populate('friends'); 
@@ -60,6 +62,19 @@ const deleteStories = async (req, res) => {
   try {
     const currentTime = new Date();
     const expirationTime = new Date(currentTime.getTime() - 24*60*60*1000); // 24 hours ago
+    // Fetch stories to get the storyPublicId
+    const expiredStories = await storyModel.find({ createdAt: { $lt: expirationTime } })
+    // Delete media from Cloudinary using the storyPublicId
+    const deleteFromCloudinary = async (publicId, resourceType) => {
+      if (publicId) {
+        await cloudinary.uploader.destroy(publicId, { resource_type: resourceType });
+      }
+    };
+
+    for (const story of expiredStories) {
+      const resourceType = story.type === 'image' ? 'image' : 'video';
+      await deleteFromCloudinary(story.storyPublicId, resourceType);
+    }
     await storyModel.deleteMany({ createdAt: { $lt: expirationTime } });
     res.status(200).json({ success: true, message: 'Expired stories removed' });
   } catch (error) {

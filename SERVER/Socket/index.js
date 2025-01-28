@@ -58,6 +58,30 @@ app.post('/upload', upload.single('file'), async (req, res) => {
     res.status(500).send('Upload to Cloudinary failed');
   }
 });
+app.post('/grp-upload', upload.single('file'), async (req, res) => { 
+  if (!req.file) { 
+    return res.status(400).send('No file uploaded'); 
+  } 
+
+  try {
+    const fileBuffer = req.file.buffer;
+
+    const result = await new Promise((resolve, reject) => {
+      cloudinary.uploader.upload_stream({
+        resource_type: 'image',
+        upload_preset: 'Zoneyz',
+      }, (error, result) => {
+        if (error) return reject(error);
+        resolve(result);
+      }).end(fileBuffer);
+    });
+
+    res.send({ filePath: result.secure_url, publicid: result.public_id });
+  } catch (error) {
+    console.error('Error uploading file to Cloudinary:', error);
+    res.status(500).send('Upload to Cloudinary failed');
+  }
+});
 const onlineUser = new Set();
 
 io.on("connection", async (socket) => {
@@ -253,6 +277,7 @@ io.on("connection", async (socket) => {
         if (group) { 
           group.image = data?.imageUrl; 
           group.name = data?.name;
+          group.imgPublicId = data?.groupPublicId;
           await group.save(); 
           // Emit group details to update clients 
           io.emit('groupDetails', group); 
