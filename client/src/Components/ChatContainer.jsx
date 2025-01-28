@@ -196,7 +196,7 @@ const ChatContainer = () => {
                     {
                       convo?.image && (
                         <div className='w-full max-sm:w-48 max-sm:h-52'>
-                          <img src={`/${convo?.image}`} className='w-full h-full object-scale-down' alt="" />
+                          <img src={convo?.image} className='w-full h-full object-scale-down' alt="" />
                         </div>
                       )
                     }
@@ -205,7 +205,7 @@ const ChatContainer = () => {
                     {
                       convo?.video && (
                         <div className='w-full'>
-                          <video controls src={`/${convo?.video}`} className='w-full h-full object-scale-down' alt="" />
+                          <video controls src={convo?.video} className='w-full h-full object-scale-down' alt="" />
                         </div>
                       )
                     }
