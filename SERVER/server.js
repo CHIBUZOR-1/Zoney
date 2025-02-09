@@ -53,7 +53,7 @@ app.use((req, res, next) => {
                 defaultSrc: ["'self'"],
                 scriptSrc: ["'self'", `'nonce-${res.locals.nonce}'`, "https://www.gstatic.com", "https://www.googleapis.com", "https://apis.google.com", "https://your-emoji-picker-cdn.com", "https://emoji-picker.com"],
                 styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://your-emoji-picker-cdn.com", "https://emoji-picker.com"],
-                imgSrc: ["'self'", "data:", "https://www.gstatic.com", "blob:", "https://as2.ftcdn.net", "https://res.cloudinary.com", "https://emoji-picker.com", "https://your-emoji-picker-cdn.com"],
+                imgSrc: ["'self'", "data:", "https://www.gstatic.com", "blob:", "https://as2.ftcdn.net", "https://res.cloudinary.com", "https://emoji-picker.com", "https://your-emoji-picker-cdn.com", "https://cdn.jsdelivr.net"],
                 connectSrc: ["'self'", "https://www.googleapis.com", "https://firebasestorage.googleapis.com", "https://identitytoolkit.googleapis.com", "blob:", "https://res.cloudinary.com", "https://your-emoji-picker-cdn.com", "https://emoji-picker.com"],
                 fontSrc: ["'self'", "https://fonts.gstatic.com"],
                 objectSrc: ["'none'"],
