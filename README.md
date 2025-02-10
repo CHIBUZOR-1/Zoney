@@ -35,7 +35,7 @@ Zoney is a social media web application built using the MERN stack. The app prov
 ![Home Page Darkmode](./client/src/Components/Assets/zdark.PNG)
 
 ### Mobile Homepage
-![Home Page](./client/src/Components/Assets/gmob.jpg)
+![Home Page](./client/src/Components/Assets/zmob.jpg)
 
 ### Profile Page
 ![Profile Page](./client/src/Components/Assets/zprof.PNG)
